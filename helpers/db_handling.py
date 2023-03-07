@@ -3,8 +3,8 @@ from config import CONN, ENGINE
 
 import pandas.io.sql as psql
 
-def client_list(value):
-    df = psql.read_sql(f"SELECT * FROM client_list WHERE fraction = {value} AND active = 1",con = ENGINE)
+def client_list():
+    df = psql.read_sql(f"SELECT * FROM client_list WHERE active = 1",con = ENGINE)
     return df
 
 def credentail(value):

@@ -8,5 +8,9 @@ SKU_RAW_DIR = join(FILE_DIR,'SKU_RAW')
 ASIN_STAGE_DIR = join(FILE_DIR,'ASIN_STAGE')
 ASIN_PRE_DIR = join(FILE_DIR,'ASIN_PRE')
 ASIN_RAW_DIR = join(FILE_DIR,'ASIN_RAW')
+config_files = join(BASE_DIR, 'config_file')
+
+PULL_TYPE = 'Weekly'
+# PULL_TYPE = 'Monthly'
 
 
