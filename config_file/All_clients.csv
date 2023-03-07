@@ -1,4 +1,4 @@
-salesforce_id,email,Name,seller_id,marketplace_id,col1,col2,col3,wasin,fraction,active
+salesforce_id,email,name,seller_id,marketplace_id,col1,col2,col3,wasin,fraction,active
 0015000000OGhOFAA1,exclusive.11x17@gmail.com,11x17Inc,A1KZIRB594ZR63,ATVPDKIKX0DER,11x17 Inc.,11x17 Inc.,United States,B2B,0,1
 0011T00002dIqh2QAC,exclusive.airmaxinc@gmail.com,AirmaxInc,A1EDR7O0GKJKM5,ATVPDKIKX0DER,"Airmax, Inc.","Airmax, Inc.",United States,B2B,0,1
 0011T00002VRWl5QAH,exclusive.amritaaromatherapy@gmail.com,AmritaAromatherapy,A3UMJHS6SHQ8BX,ATVPDKIKX0DER,Amrita Aromatherapy,Amrita Aromatherapy,United States,B2B,0,1

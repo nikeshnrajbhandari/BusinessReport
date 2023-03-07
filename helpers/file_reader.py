@@ -18,15 +18,17 @@ def current_client():
 def authentication(check_email):
     auth = pd.read_csv(os.path.join(config_files, 'Authentication.csv'))
     df_auth = pd.DataFrame(auth)
-    return df_auth.loc[df_auth['email'] == check_email]['otp'].to_string(index = False)
+    return list(df_auth.loc[df_auth['email'].str.lower() == check_email.lower()]['otp'])
 
 
-def credentials():
-    pass
+def credentials(check_name):
+    cred = pd.read_csv(os.path.join(config_files, 'Credentials.csv'))
+    df_cred = pd.DataFrame(cred)
+    return df_cred.loc[df_cred['name'].str.lower() == check_name.lower()]['credentails'].to_string(index=False)
 
 
-client = current_client().to_dict('records')
-
-for row in client:
-    print(f"Email: {row['email']}")
-    print(authentication(row['email']))
+if __name__ == '__main__':
+    client = current_client().to_dict('records')
+    for row in client:
+        print(authentication(row['email']))
+        print(credentials(row['name']))
