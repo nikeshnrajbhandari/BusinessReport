@@ -1,13 +1,3 @@
-def browser_init(driver):
-    print('Initializing broswer..')
-    driver.get(''
-        )
-    driver.maximize_window()
-#
-#
-
-#
-#
 # def auth_init(otp):
 #     otp = pyotp.parse_uri(otp)
 #     driver.find_element(By.XPATH, '//*[@id="auth-mfa-otpcode"]').send_keys(otp.now())
