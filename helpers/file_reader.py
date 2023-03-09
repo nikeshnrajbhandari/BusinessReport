@@ -30,5 +30,6 @@ def credentials(check_name):
 if __name__ == '__main__':
     client = current_client().to_dict('records')
     for row in client:
+        print(row['email']+" "+row['name'])
         print(authentication(row['email']))
         print(credentials(row['name']))

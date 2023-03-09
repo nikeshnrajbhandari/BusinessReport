@@ -1,6 +1,6 @@
-from base_class import Driver
+from base_class import Selenium
 
-class Scrape(Driver):
+class Scrape(Selenium):
     def __init__(self):
         self._header = True
         
