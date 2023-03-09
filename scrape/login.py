@@ -17,9 +17,11 @@ class Login(Selenium):
         self.btn_click(signin_btn_xpath)
 
     def authentication(self):
-        print(self.otp)
+        for param in self.otp:
+            self.auth(param)
 
     def asc_login(self):
         url = na_url
         self.load_page(url, LOAD_WAIT)
         Login.sign_in(self)
+        Login.authentication(self)

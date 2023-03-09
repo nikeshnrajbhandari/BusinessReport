@@ -14,8 +14,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 class Selenium:
-    def __init__(self, url='', headless=False):
-        self.__url = url
+    def __init__(self, headless=False):
         options = Options()
         headless = headless
         prefs = {
@@ -32,13 +31,32 @@ class Selenium:
         self._driver = webdriver.Chrome(service=service, options=options)
         self._driver.maximize_window()
 
+    def page_load_check(self, page, wait_time=60):
+        try:
+            WebDriverWait(self._driver, wait_time).until(
+                lambda driver: driver.execute_script("return document.readyState") == "complete"
+            )
+            print(f"{page} page loaded")
+        except TimeoutException:
+            print(f"{page} Loading taking too much time")
+            raise
+
+    def element_locator(self, wait_param, wait_by=By.XPATH, wait_time=60):
+        try:
+            WebDriverWait(self._driver, wait_time).until(
+                EC.visibility_of_element_located((wait_by, wait_param))
+            )
+        except TimeoutException:
+            print("Element not found.")
+            raise
+
     def load_page(self, url, wait_time=60):
         self._driver.get(url)
         try:
             WebDriverWait(self._driver, wait_time).until(
                 lambda driver: driver.execute_script("return document.readyState") == "complete"
             )
-            print("Page Loaded")
+            print("Page loaded")
         except TimeoutException:
             print("Loading taking too much time")
             raise
@@ -63,26 +81,10 @@ class Selenium:
             print("Button not found.")
             raise
 
-    def auth(self):
-        otp = pyotp.parse_uri('123')
+    def auth(self, auth_param):
+        otp = pyotp.parse_uri(auth_param)
+        Selenium.page_load_check(self,'Authentication')
         Selenium.send_key(self, auth_xpath, otp.now())
         Selenium.btn_click(self, auth_btn_xpath)
 
-    def page_load_check(self, wait_time=60):
-        try:
-            WebDriverWait(self._driver, wait_time).until(
-                lambda driver: driver.execute_script("return document.readyState") == "complete"
-            )
-            print("Page Loaded")
-        except TimeoutException:
-            print("Loading taking too much time")
-            raise
 
-    def element_locator(self, wait_param, wait_by=By.XPATH, wait_time=60):
-        try:
-            WebDriverWait(self._driver, wait_time).until(
-                EC.visibility_of_element_located((wait_by, wait_param))
-            )
-        except TimeoutException:
-            print("Element not found.")
-            raise
