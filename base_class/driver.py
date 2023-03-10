@@ -1,6 +1,6 @@
 import time
 
-import pyotp
+
 from config import auth_xpath, auth_btn_xpath
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -13,12 +13,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-class Selenium:
+class Driver:
     def __init__(self, headless=False):
         options = Options()
         headless = headless
         prefs = {
-            'download.default_directory': 'C:/Users/nnrajbhandari/Documents/Python/BR/BusinessReport/STAGE',
+            'download.default_directory': 'BusinessReport/STAGE',
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
             "safebrowsing_for_trusted_sources_enabled": False,
@@ -31,16 +31,6 @@ class Selenium:
         self._driver = webdriver.Chrome(service=service, options=options)
         self._driver.maximize_window()
 
-    def page_load_check(self, page, wait_time=60):
-        try:
-            WebDriverWait(self._driver, wait_time).until(
-                lambda driver: driver.execute_script("return document.readyState") == "complete"
-            )
-            print(f"{page} page loaded")
-        except TimeoutException:
-            print(f"{page} Loading taking too much time")
-            raise
-
     def element_locator(self, wait_param, wait_by=By.XPATH, wait_time=60):
         try:
             WebDriverWait(self._driver, wait_time).until(
@@ -50,15 +40,16 @@ class Selenium:
             print("Element not found.")
             raise
 
-    def load_page(self, url, wait_time=60):
-        self._driver.get(url)
+    def load_page(self, page, url='', wait_time=60):
+        if url != '':
+            self._driver.get(url)
         try:
             WebDriverWait(self._driver, wait_time).until(
                 lambda driver: driver.execute_script("return document.readyState") == "complete"
             )
-            print("Page loaded")
+            print(f"{page} page loaded")
         except TimeoutException:
-            print("Loading taking too much time")
+            print(f"{page} Loading taking too much time")
             raise
 
     def send_key(self, wait_param, key, wait_by=By.XPATH, wait_time=60):
@@ -81,10 +72,9 @@ class Selenium:
             print("Button not found.")
             raise
 
-    def auth(self, auth_param):
-        otp = pyotp.parse_uri(auth_param)
-        Selenium.page_load_check(self,'Authentication')
-        Selenium.send_key(self, auth_xpath, otp.now())
-        Selenium.btn_click(self, auth_btn_xpath)
+    def scroll_into_view(self, element):
+        self._driver.execute_script("arguments[0].scrollIntoView(true);", element)
 
-
+    def close_driver(self):
+        self._driver.close()
+        self._driver.quit()

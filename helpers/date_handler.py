@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 
+
 def date_range(pull_type):
     now = datetime.today()
     if pull_type.upper() == "WEEKLY":
@@ -14,6 +15,7 @@ def date_range(pull_type):
     return str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))
 
 
-start, end = date_range("monthly")
-print(start)
-print(end)
+if __name__ == '__main__':
+    start, end = date_range("monthly")
+    print(start)
+    print(end)

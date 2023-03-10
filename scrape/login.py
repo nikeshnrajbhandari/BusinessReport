@@ -1,27 +1,37 @@
-from base_class import Selenium
 from config import *
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+import pyotp
 
 
-class Login(Selenium):
-    def __init__(self, email, creds, otp):
+
+class Login:
+    def __init__(self, driver, email, creds, otp, marketplace):
+        self.driver = driver
         self.email = email
         self.creds = creds
         self.otp = otp
-        super().__init__()
+        self.marketplace = marketplace
 
     def sign_in(self):
-        self.send_key(email_xpath, self.email)
-        self.send_key(pass_xpath, self.creds)
-        self.btn_click(signin_btn_xpath)
+        self.driver.send_key(email_xpath, self.email)
+        self.driver.send_key(pass_xpath, self.creds)
+        self.driver.btn_click(signin_btn_xpath)
 
     def authentication(self):
+        self.driver.load_page('Authentication')
         for param in self.otp:
-            self.auth(param)
+            otp = pyotp.parse_uri(param)
+            try:
+                self.driver.send_key(auth_xpath, otp.now())
+                self.driver.btn_click(auth_btn_xpath)
+            except Exception:
+                continue
+
 
     def asc_login(self):
-        url = na_url
-        self.load_page(url, LOAD_WAIT)
-        Login.sign_in(self)
-        Login.authentication(self)
+        if self.marketplace == 'ATVPDKIKX0DER':
+            url = na_url
+        else:
+            url = eu_url
+        self.driver.load_page('Login Page', url, LOAD_WAIT)
+        self.sign_in()
+        self.authentication()
