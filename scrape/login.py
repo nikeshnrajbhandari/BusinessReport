@@ -2,7 +2,6 @@ from config import *
 import pyotp
 
 
-
 class Login:
     def __init__(self, driver, email, creds, otp, marketplace):
         self.driver = driver
@@ -17,15 +16,16 @@ class Login:
         self.driver.btn_click(signin_btn_xpath)
 
     def authentication(self):
-        self.driver.load_page('Authentication')
         for param in self.otp:
             otp = pyotp.parse_uri(param)
             try:
+                self.driver.load_page('Authentication')
                 self.driver.send_key(auth_xpath, otp.now())
                 self.driver.btn_click(auth_btn_xpath)
+                if self.driver.element_locator(nav_header_xpath) is True:
+                    break
             except Exception:
                 continue
-
 
     def asc_login(self):
         if self.marketplace == 'ATVPDKIKX0DER':

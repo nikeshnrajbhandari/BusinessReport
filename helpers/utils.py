@@ -2,6 +2,9 @@ import traceback
 import base64
 import pandas as pd
 
+from config import *
+
+
 def encrypt_token(token: str) -> str:
     try:
         if not len(token):
@@ -47,12 +50,15 @@ def decrypt_credentials(credential: dict) -> dict:
     return credential
 
 
-# if __name__ == '__main__':
-#     print(encrypt_token(''))
-
-
 def convert_to_number_round(i):
     try:
         return round(pd.to_numeric(i))
     except Exception:
         return i
+
+def t():
+    a = na_sku.format(start_date = '2023-01-01', end_date = '2023-01-31')
+    print(a)
+
+if __name__ == '__main__':
+    t()

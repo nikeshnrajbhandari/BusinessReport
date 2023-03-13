@@ -1,6 +1,5 @@
 import time
 
-
 from config import auth_xpath, auth_btn_xpath
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -36,9 +35,10 @@ class Driver:
             WebDriverWait(self._driver, wait_time).until(
                 EC.visibility_of_element_located((wait_by, wait_param))
             )
+            return True
         except TimeoutException:
             print("Element not found.")
-            raise
+            return False
 
     def load_page(self, page, url='', wait_time=60):
         if url != '':
@@ -73,7 +73,27 @@ class Driver:
             raise
 
     def scroll_into_view(self, element):
-        self._driver.execute_script("arguments[0].scrollIntoView(true);", element)
+        element.location_once_scrolled_into_view
+
+    def column_element_finder(self, wait_param, name_column, wait_by=By.XPATH, wait_time=60):
+        try:
+            WebDriverWait(self._driver, wait_time).until(
+                EC.visibility_of_element_located((wait_by, wait_param))
+            )
+            elements = self._driver.find_elements(wait_by, wait_param)
+            for item in elements:
+                item.location_once_scrolled_into_view
+                if item.text == name_column:
+                    item.click()
+        except TimeoutException:
+            print("Field not found.")
+            raise
+
+    def sku_download(self):
+        pass
+
+    def asin_download(self):
+        pass
 
     def close_driver(self):
         self._driver.close()
