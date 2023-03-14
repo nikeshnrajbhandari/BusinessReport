@@ -17,10 +17,10 @@ salesforce_id,email,name,seller_id,marketplace_id,col1,col2,col3,wasin,fraction,
 0011T00002f1rHcQAI,exclusive.giftcraft@gmail.com,GiftCraftCA,AM4ZP15ND71VY,A2EUQ1WTGCTBG2,Plus2Gifts,Plus2Gifts,Canada,B2B,0,1
 0015000000IYj9GAAT,exclusive.greekgear@gmail.com,GreekGear,A1TK411GES6DH8,ATVPDKIKX0DER,Greekgear,Greekgear,United States,B2B,0,1
 0011T00002QdoFJQAZ,EXCLUSIVE.Headcasedesigns@gmail.com,HeadCaseDesigns,A22QQRQRS0T6NJ,ATVPDKIKX0DER,eCell,eCell,United States,B2B,1,1
-0011T00002QdoFJQAZ,exclusive.headcasedesignsuk@gmail.com,HeadCaseDesignsDE,A3NYXP6DUI6S3E,A1PA6795UKMFR9,eCell,eCell,Germany,B2B,1,1
-0011T00002QdoFJQAZ,exclusive.headcasedesignsuk@gmail.com,HeadCaseDesignsFR,A3NYXP6DUI6S3E,A13V1IB3VIYZZH,eCell,eCell,France,B2B,1,1
-0011T00002QdoFJQAZ,exclusive.headcasedesignsuk@gmail.com,HeadCaseDesignsIT,A3NYXP6DUI6S3E,APJ6JRA9NG5V4,eCell,eCell,Italy,B2B,1,1
-0011T00002QdoFJQAZ,exclusive.headcasedesignsuk@gmail.com,HeadCaseDesignsUK,A3NYXP6DUI6S3E,A1F83G8C2ARO7P,eCell,eCell,United Kingdom,B2B,1,1
+0011T00002QdoFJQAZ,exclusive.headcasedesignsuk@gmail.com,HeadCaseDesignsDE,A3NYXP6DUI6S3E,A1PA6795UKMFR9,eCell,eCell,Germany,B2B,1,0
+0011T00002QdoFJQAZ,exclusive.headcasedesignsuk@gmail.com,HeadCaseDesignsFR,A3NYXP6DUI6S3E,A13V1IB3VIYZZH,eCell,eCell,France,B2B,1,0
+0011T00002QdoFJQAZ,exclusive.headcasedesignsuk@gmail.com,HeadCaseDesignsIT,A3NYXP6DUI6S3E,APJ6JRA9NG5V4,eCell,eCell,Italy,B2B,1,0
+0011T00002QdoFJQAZ,exclusive.headcasedesignsuk@gmail.com,HeadCaseDesignsUK,A3NYXP6DUI6S3E,A1F83G8C2ARO7P,eCell,eCell,United Kingdom,B2B,1,0
 0015000001W8TTKAA3,exclusive.homecontrols@gmail.com,HomeControls,A33RI86K4PO1EO,ATVPDKIKX0DER,"Home Controls, Inc.","Home Controls, Inc.",United States,B2B,0,1
 0011T00002aCI6UQAW,exclusive.indianametalcraft@gmail.com,IndianaMetalCraft,A3N2A9S0675O9K,ATVPDKIKX0DER,IMC Retail,IMC Retail,United States,B2B,0,1
 0011T00002aCEx7QAG,exclusive.jakemanscoughdrops@gmail.com,JakemansCoughDrops,A19164Q08DQ775,ATVPDKIKX0DER,BT Remedies,BT Remedies,United States,B2B,0,1

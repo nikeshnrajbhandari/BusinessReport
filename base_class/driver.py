@@ -1,6 +1,9 @@
 import time
+import os
 
-from config import auth_xpath, auth_btn_xpath
+from config import *
+from contextlib import contextmanager
+from helpers import download_wait, move_rename, file_exists
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -17,7 +20,7 @@ class Driver:
         options = Options()
         headless = headless
         prefs = {
-            'download.default_directory': 'BusinessReport/STAGE',
+            'download.default_directory': STAGE_DIR,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
             "safebrowsing_for_trusted_sources_enabled": False,
@@ -89,8 +92,38 @@ class Driver:
             print("Field not found.")
             raise
 
-    def sku_download(self):
-        pass
+    def every_downloads_chrome(self):
+        if not self._driver.current_url.startswith("chrome://downloads"):
+            self._driver.get("chrome://downloads/")
+        while True:
+            path = self._driver.execute_script("""
+                var items = document.querySelector('downloads-manager')
+                    .shadowRoot.getElementById('downloadsList').items;
+                if (items.every(e => e.state === "COMPLETE"))
+                    return items.map(e => e.fileUrl || e.file_url);
+                """)
+            if path:
+                break
+        return True
+    @contextmanager
+    def wait_for_new_window(self, handles, wait_time=60):
+        WebDriverWait(self._driver, wait_time).until(
+            lambda driver: len(handles) != len(driver.window_handles))
+
+    def sku_download(self, url, region, file_name):
+        self.load_page('SKU', url)
+        handles_before = self._driver.window_handles
+        if region == 'ATVPDKIKX0DER':
+            if self.element_locator(na_download):
+                self.btn_click(na_download)
+        else:
+            if self.element_locator(eu_download):
+                self.btn_click(eu_download)
+        self.wait_for_new_window(handles_before)
+        self._driver.window_handles[1]
+        if self.every_downloads_chrome():
+            download_wait()
+        move_rename(file_name, STAGE_DIR, SKU_PRE_DIR)
 
     def asin_download(self):
         pass

@@ -1,4 +1,7 @@
 import os
+from os.path import join
+import glob
+import shutil
 import time
 
 from config import FILE_DIR, STAGE_DIR, SKU_PRE_DIR, SKU_RAW_DIR, ASIN_PRE_DIR, ASIN_RAW_DIR
@@ -14,37 +17,30 @@ def make_dir():
 
 
 def del_residue_files():
-    for each_dir in [SKU_PRE_DIR, ASIN_PRE_DIR]:
+    for each_dir in [STAGE_DIR]:
         for each_file in os.listdir(each_dir):
             os.remove(os.path.join(each_dir, each_file))
 
 
-def download_wait(directory, timeout, nfiles=None):
-    """
-    Wait for downloads to finish with a specified timeout.
-
-    Args
-    ----
-    directory : str
-        The path to the folder where the files will be downloaded.
-    timeout : int
-        How many seconds to wait until timing out.
-    nfiles : int, defaults to None
-        If provided, also wait for the expected number of files.
-
-    """
-    seconds = 0
+def download_wait():
+    print("Waiting for downloads")
     dl_wait = True
-    while dl_wait and seconds < timeout:
+    while dl_wait:
         time.sleep(1)
-        dl_wait = False
-        files = os.listdir(directory)
-        if nfiles and len(files) != nfiles:
-            dl_wait = True
+        files = os.listdir(STAGE_DIR)
+        if not any(file in '.crdownload' for file in files):
+            print("Downloaded!")
+            dl_wait = False
 
-        for fname in files:
-            if fname.endswith('.crdownload'):
-                dl_wait = True
 
-        seconds += 1
-    return seconds
+def move_rename(filename, path_from, path_to):
+    pattern = join(path_from, 'BusinessReport*.csv')
+    files = glob.glob(pattern)
+    for file_name in files:
+        new_name = join(path_to, filename + '.csv')
+        shutil.move(file_name, new_name)
+        print(f'Moved to {path_to}')
+
+
+if __name__ == '__main__':
+    print(download_wait())
