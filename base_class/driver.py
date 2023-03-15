@@ -3,7 +3,7 @@ import os
 
 from config import *
 from contextlib import contextmanager
-from helpers import download_wait, move_rename, file_exists
+from helpers import download_wait, move_rename
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -105,10 +105,15 @@ class Driver:
             if path:
                 break
         return True
+
     @contextmanager
     def wait_for_new_window(self, handles, wait_time=60):
         WebDriverWait(self._driver, wait_time).until(
             lambda driver: len(handles) != len(driver.window_handles))
+
+    def expand_shadow_element(self, element):
+        shadow_root = self._driver.execute_script('return arguments[0].shadowRoot', element)
+        return shadow_root
 
     def sku_download(self, url, region, file_name):
         self.load_page('SKU', url)
@@ -120,10 +125,25 @@ class Driver:
             if self.element_locator(eu_download):
                 self.btn_click(eu_download)
         self.wait_for_new_window(handles_before)
-        self._driver.window_handles[1]
         if self.every_downloads_chrome():
             download_wait()
         move_rename(file_name, STAGE_DIR, SKU_PRE_DIR)
+
+        root1 = self._driver.find_element(By.TAG_NAME, 'downloads-manager')
+        shadow_root1 = self.expand_shadow_element(root1)
+
+        root2 = shadow_root1.find_element(By.CSS_SELECTOR, '#frb0')
+        shadow_root2 = self.expand_shadow_element(root2)
+        try:
+            WebDriverWait(shadow_root2, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '#remove')))
+        except TimeoutException:
+            print("Couldn't find element")
+        root3 = shadow_root2.find_element(By.CSS_SELECTOR, '#remove')
+        shadow_root3 = self.expand_shadow_element(root3)
+        close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')
+        close_button.click()
+
+        time.sleep(30)
 
     def asin_download(self):
         pass
