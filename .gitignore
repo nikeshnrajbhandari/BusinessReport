@@ -1,5 +1,5 @@
-config_file/
-requirements.txt
+config/
+.idea
 *.pyc
-*.iml
-*.xml
+*.csv
+
