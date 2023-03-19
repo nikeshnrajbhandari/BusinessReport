@@ -115,7 +115,7 @@ class Driver:
         shadow_root = self._driver.execute_script('return arguments[0].shadowRoot', element)
         return shadow_root
 
-    def sku_download(self, url, region, file_name):
+    def sku_download(self, url, region):
         self.load_page('SKU', url)
         handles_before = self._driver.window_handles
         if region == 'ATVPDKIKX0DER':
@@ -127,7 +127,6 @@ class Driver:
         self.wait_for_new_window(handles_before)
         if self.every_downloads_chrome():
             download_wait()
-        move_rename(file_name, STAGE_DIR, SKU_PRE_DIR)
 
         root1 = self._driver.find_element(By.TAG_NAME, 'downloads-manager')
         shadow_root1 = self.expand_shadow_element(root1)
@@ -143,10 +142,32 @@ class Driver:
         close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')
         close_button.click()
 
-        time.sleep(30)
+    def withoutasin_download(self, url, region):
+        self.load_page('WithoutASIN', url)
+        handles_before = self._driver.window_handles
+        if region == 'ATVPDKIKX0DER':
+            if self.element_locator(na_download):
+                self.btn_click(na_download)
+        else:
+            if self.element_locator(eu_download):
+                self.btn_click(eu_download)
+        self.wait_for_new_window(handles_before)
+        if self.every_downloads_chrome():
+            download_wait()
 
-    def asin_download(self):
-        pass
+        root1 = self._driver.find_element(By.TAG_NAME, 'downloads-manager')
+        shadow_root1 = self.expand_shadow_element(root1)
+
+        root2 = shadow_root1.find_element(By.CSS_SELECTOR, '#frb0')
+        shadow_root2 = self.expand_shadow_element(root2)
+        try:
+            WebDriverWait(shadow_root2, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '#remove')))
+        except TimeoutException:
+            print("Couldn't find element")
+        root3 = shadow_root2.find_element(By.CSS_SELECTOR, '#remove')
+        shadow_root3 = self.expand_shadow_element(root3)
+        close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')
+        close_button.click()
 
     def close_driver(self):
         self._driver.close()

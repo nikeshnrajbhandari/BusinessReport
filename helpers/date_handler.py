@@ -19,3 +19,8 @@ if __name__ == '__main__':
     start, end = date_range("monthly")
     print(start)
     print(end)
+    s = datetime.strptime(start, "%Y-%m-%d")
+    e = datetime.strptime(end, "%Y-%m-%d")
+    while s <= e:
+        print(s)
+        s = s + timedelta(days=1)

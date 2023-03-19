@@ -4,6 +4,8 @@ import glob
 import shutil
 import time
 
+import pandas as pd
+
 from config import FILE_DIR, STAGE_DIR, SKU_PRE_DIR, SKU_RAW_DIR, ASIN_PRE_DIR, ASIN_RAW_DIR
 
 
@@ -40,6 +42,14 @@ def move_rename(filename, path_from, path_to):
         new_name = join(path_to, filename + '.csv')
         shutil.move(file_name, new_name)
         print(f'Moved to {path_to}')
+
+
+def concat_files():
+    file_format = join(STAGE_DIR, '*.csv')
+    file_list = glob.glob(file_format)
+
+    df = pd.concat(map(pd.read_csv, file_list))
+    df.to_csv(join(STAGE_DIR, 'BusinessReport.csv'), encoding='utf-8', index=False)
 
 
 if __name__ == '__main__':

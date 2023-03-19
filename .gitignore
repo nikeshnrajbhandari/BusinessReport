@@ -1,4 +1,4 @@
-config/
+config_file/
 .idea
 *.pyc
 *.csv
