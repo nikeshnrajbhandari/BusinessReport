@@ -118,7 +118,7 @@ class Driver:
     def sku_download(self, url, region):
         self.load_page('SKU', url)
         handles_before = self._driver.window_handles
-        if region == 'ATVPDKIKX0DER':
+        if region in {'ATVPDKIKX0DER', 'A2EUQ1WTGCTBG2', 'A1AM78C64UM0Y8'}:
             if self.element_locator(na_download):
                 self.btn_click(na_download)
         else:
@@ -145,7 +145,7 @@ class Driver:
     def withoutasin_download(self, url, region):
         self.load_page('WithoutASIN', url)
         handles_before = self._driver.window_handles
-        if region == 'ATVPDKIKX0DER':
+        if region in {'ATVPDKIKX0DER', 'A2EUQ1WTGCTBG2', 'A1AM78C64UM0Y8'}:
             if self.element_locator(na_download):
                 self.btn_click(na_download)
         else:

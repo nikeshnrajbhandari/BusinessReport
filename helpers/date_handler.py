@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 
 
 def date_range(pull_type):
@@ -12,15 +12,11 @@ def date_range(pull_type):
         now = now.replace(day=1)
         end = now - timedelta(days=1)
         start = end.replace(day=1)
-    return str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))
+    return [[str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))]]
 
 
 if __name__ == '__main__':
-    start, end = date_range("monthly")
-    print(start)
-    print(end)
-    s = datetime.strptime(start, "%Y-%m-%d")
-    e = datetime.strptime(end, "%Y-%m-%d")
-    while s <= e:
-        print(s)
-        s = s + timedelta(days=1)
+    dates = date_range("monthly")
+    for date in dates:
+        print(date[0])
+        print(date[1])

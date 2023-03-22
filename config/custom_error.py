@@ -1,0 +1,2 @@
+class IncorrectHeader(Exception):
+    pass

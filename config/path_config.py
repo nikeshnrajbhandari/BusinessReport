@@ -22,6 +22,7 @@ auth_btn_xpath = '//*[@id="auth-signin-button"]'
 error_xpath = '//*[@id="auth-error-message-box"]/div/h4'
 
 # Navigation Page
+nav_tbl_xpath = '/html/body/div/div[2]/div[1]/div/div/div[1]/kat-box/div/div[3]/div/div[1]/div/div'
 nav_header_xpath = '/html/body/div/div[2]/div[1]/div/div/div[1]/kat-box/h1'
 col1_xpath = '//*[@id="picker-container"]/div/div[2]/div/div[1]/div/div/button/div/div[1]'
 col2_xpath = '//*[@id="picker-container"]/div/div[2]/div/div[2]/div/div/button/div/div[1]'

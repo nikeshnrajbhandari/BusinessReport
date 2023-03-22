@@ -1,5 +1,6 @@
-from config import *
 import pyotp
+from config import *
+from helpers.utils import decrypt_token
 
 
 class Login:
@@ -12,12 +13,12 @@ class Login:
 
     def sign_in(self):
         self.driver.send_key(email_xpath, self.email)
-        self.driver.send_key(pass_xpath, self.creds)
+        self.driver.send_key(pass_xpath, decrypt_token(self.creds))
         self.driver.btn_click(signin_btn_xpath)
 
     def authentication(self):
         for param in self.otp:
-            otp = pyotp.parse_uri(param)
+            otp = pyotp.parse_uri(decrypt_token(param))
             try:
                 self.driver.load_page('Authentication')
                 self.driver.send_key(auth_xpath, otp.now())
@@ -28,7 +29,7 @@ class Login:
                 continue
 
     def asc_login(self):
-        if self.marketplace == 'ATVPDKIKX0DER':
+        if self.marketplace in {'ATVPDKIKX0DER', 'A2EUQ1WTGCTBG2', 'A1AM78C64UM0Y8'}:
             url = na_url
         else:
             url = eu_url

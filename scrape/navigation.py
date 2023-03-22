@@ -11,9 +11,17 @@ class Navigation:
         column_list = [[col1_xpath, self.columns[0]],
                        [col2_xpath, self.columns[1]],
                        [col3_xpath, self.columns[2]]]
-        self.driver.load_page('Navigation')
-        for items in column_list:
-            self.selector(items[0], items[1])
+
+        try:
+            self.driver.load_page('Navigation')
+            for items in column_list:
+                self.selector(items[0], items[1])
+        except Exception as err:
+            if self.driver.element_locator(home_xpath):
+                pass
+            else:
+                print('Navigation Page not found.')
+                raise
 
     def selector(self, xpath, name_column):
         self.driver.column_element_finder(xpath, name_column)

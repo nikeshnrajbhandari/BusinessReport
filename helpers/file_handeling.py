@@ -1,12 +1,13 @@
 import os
-from os.path import join
 import glob
-import shutil
 import time
-
+import shutil
 import pandas as pd
 
-from config import FILE_DIR, STAGE_DIR, SKU_PRE_DIR, SKU_RAW_DIR, ASIN_PRE_DIR, ASIN_RAW_DIR
+from os.path import join, isfile
+from config import FILE_DIR, STAGE_DIR, SKU_PRE_DIR, SKU_RAW_DIR, ASIN_PRE_DIR, ASIN_RAW_DIR, SKU_HEADER, \
+    WITHOUTASIN_HEADER
+from config.custom_error import IncorrectHeader
 
 
 def make_dir():
@@ -21,7 +22,7 @@ def make_dir():
 def del_residue_files():
     for each_dir in [STAGE_DIR]:
         for each_file in os.listdir(each_dir):
-            os.remove(os.path.join(each_dir, each_file))
+            os.remove(join(each_dir, each_file))
 
 
 def download_wait():
@@ -47,10 +48,46 @@ def move_rename(filename, path_from, path_to):
 def concat_files():
     file_format = join(STAGE_DIR, '*.csv')
     file_list = glob.glob(file_format)
-
     df = pd.concat(map(pd.read_csv, file_list))
-    df.to_csv(join(STAGE_DIR, 'BusinessReport.csv'), encoding='utf-8', index=False)
+    del_residue_files()
+    df.to_csv(join(STAGE_DIR, 'BusinessReport.csv'), encoding='utf-8', index=False, lineterminator='\n')
+    print('Files concat finished.')
+
+def del_empty_files(path):
+    files = [f for f in os.listdir(path) if isfile(join(path, f))]
+    for file in files:
+        df = pd.read_csv(join(path, file))
+        if df.empty:
+            os.remove(join(path, file))
+
+def header_check(report_type):
+    path_from = ''
+    header = []
+    path_to = ''
+    if report_type == 'SKU':
+        path_from = SKU_PRE_DIR
+        header = SKU_HEADER
+        path_to = SKU_RAW_DIR
+    elif report_type == 'WITHOUTASIN':
+        path_from = ASIN_PRE_DIR
+        header = WITHOUTASIN_HEADER
+        path_to = ASIN_RAW_DIR
+    files = [f for f in os.listdir(path_from) if isfile(join(path_from, f))]
+    for file in files:
+        df = pd.read_csv(join(path_from, file))
+        column_list = list(df.columns)
+        if header == column_list:
+            shutil.move(join(path_from, file), join(path_to, file))
+            print(f"{file} moved to raw")
+        elif len(header) != len(column_list) and all(item in column_list for item in header):
+            df = df[header]
+            print(f'Incorrect header list: {column_list}')
+            df.to_csv(join(path_to, file), encoding='utf-8', index=False, lineterminator='\n')
+            print(f"Header Corrected for {file} [{type}]")
+            os.remove(join(path_from, file))
+        else:
+            raise IncorrectHeader(f'Unregistered header in {type}')
 
 
 if __name__ == '__main__':
-    print(download_wait())
+    del_empty_files()

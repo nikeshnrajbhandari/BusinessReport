@@ -1,6 +1,7 @@
 import traceback
 import base64
 import pandas as pd
+import os
 
 from config import *
 
@@ -56,9 +57,20 @@ def convert_to_number_round(i):
     except Exception:
         return i
 
+
 def t():
-    a = na_sku.format(start_date = '2023-01-01', end_date = '2023-01-31')
+    a = na_sku.format(start_date='2023-01-01', end_date='2023-01-31')
     print(a)
 
+
+def encode_files():
+    file = pd.DataFrame(pd.read_csv(os.path.join(config_files, 'Credentials.csv')))
+    for _, row in file.iterrows():
+        encoded = encrypt_token((row['credentails']))
+        row['credentails'] = encoded
+    print(file)
+    file.to_csv(os.path.join(config_files, 'Credentials.csv'), index=False, lineterminator='\n')
+
+
 if __name__ == '__main__':
-    t()
+    pass
