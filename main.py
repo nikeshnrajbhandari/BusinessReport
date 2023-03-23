@@ -1,7 +1,7 @@
 import os
 import time
 import pandas as pd
-from config import PULL_TYPE
+from config import PULL_TYPE, headless
 from helpers import *
 from base_class import Driver
 from scrape import Login, Navigation, Scraper
@@ -16,7 +16,7 @@ def main():
 
     if os.path.isfile('config_file/Failed_File.csv'):
         os.remove('config_file/Failed_File.csv')
-    client_list = current_client().to_dict('records')
+    client_list = current_client()
     br_download(client_list, dates)
     print('Download complete for all clients!')
 
@@ -27,7 +27,7 @@ def br_download(client_list, dates, count=0):
 
         if item['active'] == 1:
             for date in dates:
-                driver = Driver()
+                driver = Driver(headless)
                 print(item)
                 try:
                     login = Login(driver, item['email'], credentials(item['name']), authentication(item['email']),
@@ -44,6 +44,7 @@ def br_download(client_list, dates, count=0):
 
                 except Exception as err:
                     print('Failed to download')
+                    print(err)
                     failed.append(item)
                 finally:
                     try:
@@ -52,7 +53,7 @@ def br_download(client_list, dates, count=0):
                         pass
     if len(failed) > 0 and count < 5:
         print(f'Retry count: {count + 1}')
-        br_download(failed, count + 1)
+        br_download(failed, dates, count + 1)
     elif len(failed) > 0:
         failed_file = pd.DataFrame(failed)
         failed_file.to_csv(os.path.join('config_file', 'Failed_File.csv'), index=False, lineterminator='\n')

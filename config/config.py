@@ -1,4 +1,5 @@
 from os.path import dirname, abspath, join
+from config.arguments import get_args
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
 FILE_DIR = join(BASE_DIR, 'BusinessReport')
@@ -10,14 +11,22 @@ ASIN_PRE_DIR = join(FILE_DIR, 'ASIN_PRE')
 ASIN_RAW_DIR = join(FILE_DIR, 'ASIN_RAW')
 config_files = join(BASE_DIR, 'config_file')
 
-PULL_TYPE = 'WEEKLY'
-# PULL_TYPE = 'Monthly'
 LOAD_WAIT = 60
 
 SKU_HEADER = ['(Parent) ASIN', '(Child) ASIN', 'SKU']
 WITHOUTASIN_HEADER = ['(Parent) ASIN', '(Child) ASIN', 'Title', 'Sessions - Mobile App', 'Sessions - Browser',
-          'Sessions - Total', 'Session Percentage - Mobile App', 'Session Percentage - Browser',
-          'Session Percentage - Total', 'Page Views - Mobile App', 'Page Views - Browser', 'Page Views - Total',
-          'Page Views Percentage - Mobile App', 'Page Views Percentage - Browser', 'Page Views Percentage - Total',
-          'Featured Offer (Buy Box) Percentage', 'Units Ordered', 'Unit Session Percentage', 'Ordered Product Sales',
-          'Total Order Items']
+                      'Sessions - Total', 'Session Percentage - Mobile App', 'Session Percentage - Browser',
+                      'Session Percentage - Total', 'Page Views - Mobile App', 'Page Views - Browser',
+                      'Page Views - Total',
+                      'Page Views Percentage - Mobile App', 'Page Views Percentage - Browser',
+                      'Page Views Percentage - Total',
+                      'Featured Offer (Buy Box) Percentage', 'Units Ordered', 'Unit Session Percentage',
+                      'Ordered Product Sales',
+                      'Total Order Items']
+#Argument
+args = get_args()
+salesforce_id = args.client
+PULL_TYPE = args.report_type
+
+#Driver config
+headless = True

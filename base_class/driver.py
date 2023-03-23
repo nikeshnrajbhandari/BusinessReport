@@ -5,6 +5,7 @@ from config import *
 from contextlib import contextmanager
 from helpers import download_wait, move_rename
 from selenium import webdriver
+from selenium.webdriver import ChromeOptions, Chrome
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -17,8 +18,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 class Driver:
     def __init__(self, headless=False):
-        options = Options()
-        headless = headless
+        options = ChromeOptions()
         prefs = {
             'download.default_directory': STAGE_DIR,
             "download.prompt_for_download": False,
@@ -26,12 +26,15 @@ class Driver:
             "safebrowsing_for_trusted_sources_enabled": False,
             "safebrowsing.enabled": False
         }
+        if headless:
+            options.add_argument("--headless=new")
+
         options.add_experimental_option("prefs", prefs)
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         service = Service(executable_path='C:/Driver/chromedriver')
         # service = Service(executable_path=ChromeDriverManager().install())
         self._driver = webdriver.Chrome(service=service, options=options)
-        self._driver.maximize_window()
+
 
     def element_locator(self, wait_param, wait_by=By.XPATH, wait_time=60):
         try:
