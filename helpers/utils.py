@@ -73,4 +73,5 @@ def encode_files():
 
 
 if __name__ == '__main__':
-    pass
+    a = 'gshopping1'
+    print(encrypt_token(a))

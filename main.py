@@ -11,7 +11,7 @@ def main():
     dates = list()
     make_dir()
     del_residue_files()
-    if PULL_TYPE.upper() in ['WEEKLY' or 'MONTHLY']:
+    if PULL_TYPE.lower() in ['weekly', 'monthly', 'monthly_history', 'weekly_history']:
         dates = date_range(PULL_TYPE)
 
     if os.path.isfile('config_file/Failed_File.csv'):
@@ -26,31 +26,32 @@ def br_download(client_list, dates, count=0):
     for item in client_list:
 
         if item['active'] == 1:
-            for date in dates:
-                driver = Driver(headless)
-                print(item)
-                try:
-                    login = Login(driver, item['email'], credentials(item['name']), authentication(item['email']),
-                                  item['marketplace_id'])
-                    login.asc_login()
-                    navigation = Navigation(driver, item['col1'], item['col2'], item['col3'])
-                    navigation.navigate()
+
+            driver = Driver(headless)
+            print(item)
+            try:
+                login = Login(driver, item['email'], credentials(item['name']), authentication(item['email']),
+                              item['marketplace_id'])
+                login.asc_login()
+                navigation = Navigation(driver, item['col1'], item['col2'], item['col3'])
+                navigation.navigate()
+                print(dates)
+                for date in dates:
                     scraper = Scraper(driver, item['seller_id'], item['marketplace_id'], item['name'],
                                       item['wasin'], item['fraction'], date[0], date[1])
                     scraper.scrape()
-                    print(f"Download complete for {item['name']}")
-                    time.sleep(5)
+                print(f"Download complete for {item['name']}")
+                time.sleep(5)
+                driver.close_driver()
+            except Exception as err:
+                print('Failed to download')
+                print(err)
+                failed.append(item)
+            finally:
+                try:
                     driver.close_driver()
-
-                except Exception as err:
-                    print('Failed to download')
-                    print(err)
-                    failed.append(item)
-                finally:
-                    try:
-                        driver.close_driver()
-                    except Exception:
-                        pass
+                except Exception:
+                    pass
     if len(failed) > 0 and count < 5:
         print(f'Retry count: {count + 1}')
         br_download(failed, dates, count + 1)

@@ -33,7 +33,7 @@ class Scraper:
         move_rename(filename, STAGE_DIR, SKU_PRE_DIR)
         del_empty_files(SKU_PRE_DIR)
         header_check('SKU')
-
+        time.sleep(15)
         if self.marketplace_id in {'ATVPDKIKX0DER', 'A2EUQ1WTGCTBG2', 'A1AM78C64UM0Y8'}:
             self.driver.load_page('Business Report', na_br)
             if self.fraction == 0:
@@ -68,8 +68,11 @@ class Scraper:
                 #                            datetime.strptime(end_date, "%Y-%m-%d"))
         time.sleep(5)
         move_rename(filename, STAGE_DIR, ASIN_PRE_DIR)
+        time.sleep(5)
         del_empty_files(ASIN_PRE_DIR)
+        time.sleep(5)
         header_check('WITHOUTASIN')
+        time.sleep(15)
     def fraction_download(self, url, start_date, end_date):
         while start_date <= end_date:
             print(f'Download date: {str(start_date.strftime("%Y-%m-%d"))}')

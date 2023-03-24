@@ -76,6 +76,8 @@ def header_check(report_type):
     for file in files:
         df = pd.read_csv(join(path_from, file))
         column_list = list(df.columns)
+        print(f'Header: {header}')
+        print(f'Header in file {column_list}')
         if header == column_list:
             shutil.move(join(path_from, file), join(path_to, file))
             print(f"{file} moved to raw")
@@ -83,10 +85,10 @@ def header_check(report_type):
             df = df[header]
             print(f'Incorrect header list: {column_list}')
             df.to_csv(join(path_to, file), encoding='utf-8', index=False, lineterminator='\n')
-            print(f"Header Corrected for {file} [{type}]")
+            print(f"Header Corrected for {file} [{report_type}]")
             os.remove(join(path_from, file))
         else:
-            raise IncorrectHeader(f'Unregistered header in {type}')
+            raise IncorrectHeader(f'Unregistered header in {report_type}')
 
 
 if __name__ == '__main__':
