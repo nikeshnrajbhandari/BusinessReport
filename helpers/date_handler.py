@@ -8,12 +8,12 @@ def date_range(pull_type):
 
     if pull_type.lower() == "weekly":
         start, end = weekly(now)
-        date_range = [str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))]
+        date_range = [[str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))]]
 
     elif pull_type.lower() == "monthly":
         date_ref = now.replace(day=1)
         start, end = monthly(date_ref)
-        date_range = [str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))]
+        date_range = [[str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))]]
 
     elif pull_type.lower() == "monthly_history":
         date_ref = now.replace(day=1)
@@ -47,7 +47,6 @@ def monthly(date_ref):
 
 if __name__ == '__main__':
     dates = date_range("weekly_history")
-    print(dates)
     # for date in dates:
     #     print(date[0])
     #     print(date[1])

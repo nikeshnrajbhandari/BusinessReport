@@ -1,10 +1,20 @@
-import os
-import time
-import pandas as pd
+from datetime import datetime
+import logging
 from config import PULL_TYPE, headless
 from helpers import *
 from base_class import Driver
 from scrape import Login, Navigation, Scraper
+
+logger = logging.getLogger("nikesh")
+logging.basicConfig(format='%(asctime)s :%(levelname)-8s :%(message)s')
+logger.setLevel(logging.INFO)
+
+file_handler = logging.FileHandler(f'BusinessReport-{datetime.now().strftime("%Y-%m-%d")}.log')
+formatter = logging.Formatter('%(asctime)s: %(levelname)-8s: %(message)s')
+file_handler.setFormatter(formatter)
+console = logging.StreamHandler()
+logger.addHandler(console)
+logger.addHandler(file_handler)
 
 
 def main():
@@ -18,7 +28,7 @@ def main():
         os.remove('config_file/Failed_File.csv')
     client_list = current_client()
     br_download(client_list, dates)
-    print('Download complete for all clients!')
+    logger.info('Download process completed!')
 
 
 def br_download(client_list, dates, count=0):
@@ -28,32 +38,32 @@ def br_download(client_list, dates, count=0):
         if item['active'] == 1:
 
             driver = Driver(headless)
-            print(item)
+            logger.info(item)
             try:
                 login = Login(driver, item['email'], credentials(item['name']), authentication(item['email']),
                               item['marketplace_id'])
                 login.asc_login()
                 navigation = Navigation(driver, item['col1'], item['col2'], item['col3'])
                 navigation.navigate()
-                print(dates)
+                logger.info(dates)
                 for date in dates:
                     scraper = Scraper(driver, item['seller_id'], item['marketplace_id'], item['name'],
                                       item['wasin'], item['fraction'], date[0], date[1])
                     scraper.scrape()
-                print(f"Download complete for {item['name']}")
+                logger.info(f"Download complete for {item['name']}")
                 time.sleep(5)
                 driver.close_driver()
             except Exception as err:
-                print('Failed to download')
-                print(err)
+                logger.exception('Failed to download')
+                logger.exception(err)
                 failed.append(item)
             finally:
                 try:
                     driver.close_driver()
                 except Exception:
                     pass
-    if len(failed) > 0 and count < 5:
-        print(f'Retry count: {count + 1}')
+    if len(failed) > 0 and count < 3:
+        logger.info(f'Retry count: {count + 1}')
         br_download(failed, dates, count + 1)
     elif len(failed) > 0:
         failed_file = pd.DataFrame(failed)

@@ -1,5 +1,6 @@
 import time
 import os
+import logging
 
 from config import *
 from contextlib import contextmanager
@@ -17,6 +18,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 class Driver:
+
     def __init__(self, headless=False):
         options = ChromeOptions()
         prefs = {
@@ -34,6 +36,8 @@ class Driver:
         service = Service(executable_path='C:/Driver/chromedriver')
         # service = Service(executable_path=ChromeDriverManager().install())
         self._driver = webdriver.Chrome(service=service, options=options)
+        self.logger = logging.getLogger("nikesh")
+        self.logger.setLevel(logging.INFO)
 
 
     def element_locator(self, wait_param, wait_by=By.XPATH, wait_time=60):
@@ -43,7 +47,7 @@ class Driver:
             )
             return True
         except TimeoutException:
-            print("Element not found.")
+            self.logger.exception("Element not found.")
             return False
 
     def load_page(self, page, url='', wait_time=60):
@@ -53,9 +57,9 @@ class Driver:
             WebDriverWait(self._driver, wait_time).until(
                 lambda driver: driver.execute_script("return document.readyState") == "complete"
             )
-            print(f"{page} page loaded")
+            self.logger.info(f"{page} page loaded")
         except TimeoutException:
-            print(f"{page} Loading taking too much time")
+            self.logger.exception(f"{page} Loading taking too much time")
             raise
 
     def send_key(self, wait_param, key, wait_by=By.XPATH, wait_time=60):
@@ -65,7 +69,7 @@ class Driver:
             )
             self._driver.find_element(wait_by, wait_param).send_keys(key)
         except TimeoutException:
-            print("Field not found.")
+            self.logger.exception("Field not found.")
             raise
 
     def btn_click(self, wait_param, wait_by=By.XPATH, wait_time=60):
@@ -75,7 +79,7 @@ class Driver:
             )
             self._driver.find_element(wait_by, wait_param).click()
         except TimeoutException:
-            print("Button not found.")
+            self.logger.exception("Button not found.")
             raise
 
     def scroll_into_view(self, element):
@@ -92,7 +96,7 @@ class Driver:
                 if item.text == name_column:
                     item.click()
         except TimeoutException:
-            print("Field not found.")
+            self.logger.exception("Field not found.")
             raise
 
     def every_downloads_chrome(self):
@@ -139,7 +143,7 @@ class Driver:
         try:
             WebDriverWait(shadow_root2, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '#remove')))
         except TimeoutException:
-            print("Couldn't find element")
+            self.logger.exception("Couldn't find element")
         root3 = shadow_root2.find_element(By.CSS_SELECTOR, '#remove')
         shadow_root3 = self.expand_shadow_element(root3)
         close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')
@@ -166,7 +170,7 @@ class Driver:
         try:
             WebDriverWait(shadow_root2, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '#remove')))
         except TimeoutException:
-            print("Couldn't find element")
+            self.logger.exception("Couldn't find element")
         root3 = shadow_root2.find_element(By.CSS_SELECTOR, '#remove')
         shadow_root3 = self.expand_shadow_element(root3)
         close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')

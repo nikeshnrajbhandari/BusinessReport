@@ -1,15 +1,20 @@
 import pyotp
+import logging
+
 from config import *
 from helpers.utils import decrypt_token
 
 
 class Login:
+
     def __init__(self, driver, email, creds, otp, marketplace):
         self.driver = driver
         self.email = email
         self.creds = creds
         self.otp = otp
         self.marketplace = marketplace
+        self.logger = logging.getLogger("nikesh")
+        self.logger.setLevel(logging.INFO)
 
     def sign_in(self):
         self.driver.send_key(email_xpath, self.email)

@@ -3,10 +3,12 @@ import logging
 
 
 class Navigation:
+
     def __init__(self, driver, col1, col2, col3):
         self.driver = driver
         self.columns = [col1, col2, col3]
-
+        self.logger = logging.getLogger("nikesh")
+        self.logger.setLevel(logging.INFO)
     def navigate(self):
         column_list = [[col1_xpath, self.columns[0]],
                        [col2_xpath, self.columns[1]],
@@ -20,7 +22,7 @@ class Navigation:
             if self.driver.element_locator(home_xpath):
                 pass
             else:
-                print('Navigation Page not found.')
+                self.logger.info('Navigation Page not found.')
                 raise
 
     def selector(self, xpath, name_column):

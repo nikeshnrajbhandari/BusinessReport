@@ -2,7 +2,6 @@ import os
 import pandas as pd
 from config import config_files, salesforce_id
 
-
 def current_client():
     clients = pd.read_csv(os.path.join(config_files, 'All_clients.csv'))
     curr_client = pd.read_csv(os.path.join(config_files, 'Client_list.csv'))
@@ -34,8 +33,9 @@ def credentials(check_name):
 
 
 if __name__ == '__main__':
-    client = current_client().to_dict('records')
-    for row in client:
-        print(row['email'] + " " + row['name'])
-        print(authentication(row['email']))
-        print(credentials(row['name']))
+    # client = current_client().to_dict('records')
+    # for row in client:
+    #     print(row['email'] + " " + row['name'])
+    #     print(authentication(row['email']))
+    #     print(credentials(row['name']))
+    pass

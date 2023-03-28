@@ -5,3 +5,4 @@ config_file/
 br_venv/
 Authentication.csv
 Credentials.csv
+*.log
