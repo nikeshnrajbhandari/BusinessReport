@@ -1,9 +1,13 @@
-from datetime import datetime
+import os
+import time
 import logging
-from config import PULL_TYPE, headless
-from helpers import *
+import pandas as pd
+
+from datetime import datetime
 from base_class import Driver
+from config import PULL_TYPE, headless
 from scrape import Login, Navigation, Scraper
+from helpers import make_dir, del_residue_files, date_range, current_client, credentials, authentication
 
 logger = logging.getLogger("nikesh")
 logging.basicConfig(format='%(asctime)s :%(levelname)-8s :%(message)s')
@@ -52,7 +56,6 @@ def br_download(client_list, dates, count=0):
                     scraper.scrape()
                 logger.info(f"Download complete for {item['name']}")
                 time.sleep(5)
-                driver.close_driver()
             except Exception as err:
                 logger.exception('Failed to download')
                 logger.exception(err)
@@ -63,6 +66,7 @@ def br_download(client_list, dates, count=0):
                 except Exception:
                     pass
     if len(failed) > 0 and count < 3:
+        time.sleep(1800)
         logger.info(f'Retry count: {count + 1}')
         br_download(failed, dates, count + 1)
     elif len(failed) > 0:

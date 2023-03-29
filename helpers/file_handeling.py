@@ -81,8 +81,8 @@ def header_check(report_type):
     for file in files:
         df = pd.read_csv(join(path_from, file))
         column_list = list(df.columns)
-        print(column_list)
-        print(header)
+        logger.info(column_list)
+        logger.info(header)
         if header == column_list:
             shutil.move(join(path_from, file), join(path_to, file))
             logger.info(f"{file} moved to raw")

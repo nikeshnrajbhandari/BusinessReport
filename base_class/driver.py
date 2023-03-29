@@ -1,18 +1,14 @@
-import time
-import os
 import logging
 
 from config import *
-from contextlib import contextmanager
-from helpers import download_wait, move_rename
 from selenium import webdriver
-from selenium.webdriver import ChromeOptions, Chrome
-from selenium.common.exceptions import TimeoutException
+from contextlib import contextmanager
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver import ChromeOptions
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -36,9 +32,9 @@ class Driver:
         service = Service(executable_path='C:/Driver/chromedriver')
         # service = Service(executable_path=ChromeDriverManager().install())
         self._driver = webdriver.Chrome(service=service, options=options)
+        self._driver.maximize_window()
         self.logger = logging.getLogger("nikesh")
         self.logger.setLevel(logging.INFO)
-
 
     def element_locator(self, wait_param, wait_by=By.XPATH, wait_time=60):
         try:
@@ -117,51 +113,14 @@ class Driver:
     def wait_for_new_window(self, handles, wait_time=60):
         WebDriverWait(self._driver, wait_time).until(
             lambda driver: len(handles) != len(driver.window_handles))
+        WebDriverWait(self._driver, wait_time).until(
+            lambda driver: len(handles) == len(driver.window_handles))
 
     def expand_shadow_element(self, element):
         shadow_root = self._driver.execute_script('return arguments[0].shadowRoot', element)
         return shadow_root
 
-    def sku_download(self, url, region):
-        self.load_page('SKU', url)
-        handles_before = self._driver.window_handles
-        if region in {'ATVPDKIKX0DER', 'A2EUQ1WTGCTBG2', 'A1AM78C64UM0Y8'}:
-            if self.element_locator(na_download):
-                self.btn_click(na_download)
-        else:
-            if self.element_locator(eu_download):
-                self.btn_click(eu_download)
-        self.wait_for_new_window(handles_before)
-        if self.every_downloads_chrome():
-            download_wait()
-
-        root1 = self._driver.find_element(By.TAG_NAME, 'downloads-manager')
-        shadow_root1 = self.expand_shadow_element(root1)
-
-        root2 = shadow_root1.find_element(By.CSS_SELECTOR, '#frb0')
-        shadow_root2 = self.expand_shadow_element(root2)
-        try:
-            WebDriverWait(shadow_root2, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '#remove')))
-        except TimeoutException:
-            self.logger.exception("Couldn't find element")
-        root3 = shadow_root2.find_element(By.CSS_SELECTOR, '#remove')
-        shadow_root3 = self.expand_shadow_element(root3)
-        close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')
-        close_button.click()
-
-    def withoutasin_download(self, url, region):
-        self.load_page('WithoutASIN', url)
-        handles_before = self._driver.window_handles
-        if region in {'ATVPDKIKX0DER', 'A2EUQ1WTGCTBG2', 'A1AM78C64UM0Y8'}:
-            if self.element_locator(na_download):
-                self.btn_click(na_download)
-        else:
-            if self.element_locator(eu_download):
-                self.btn_click(eu_download)
-        self.wait_for_new_window(handles_before)
-        if self.every_downloads_chrome():
-            download_wait()
-
+    def rm_downloaded_item(self):
         root1 = self._driver.find_element(By.TAG_NAME, 'downloads-manager')
         shadow_root1 = self.expand_shadow_element(root1)
 

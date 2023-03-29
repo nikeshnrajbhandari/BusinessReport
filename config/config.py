@@ -1,5 +1,5 @@
-from os.path import dirname, abspath, join
 from config.arguments import get_args
+from os.path import dirname, abspath, join
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
 FILE_DIR = join(BASE_DIR, 'BusinessReport')
@@ -23,10 +23,10 @@ WITHOUTASIN_HEADER = ['(Parent) ASIN', '(Child) ASIN', 'Title', 'Sessions - Mobi
                       'Featured Offer (Buy Box) Percentage', 'Units Ordered', 'Unit Session Percentage',
                       'Ordered Product Sales',
                       'Total Order Items']
-#Argument
+# Argument
 args = get_args()
 salesforce_id = args.client
 PULL_TYPE = args.report_type
 
-#Driver config
-headless = True
+# Driver config
+headless = False

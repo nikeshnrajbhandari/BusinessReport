@@ -1,5 +1,6 @@
-from config import *
 import logging
+
+from config import *
 
 
 class Navigation:
@@ -9,6 +10,7 @@ class Navigation:
         self.columns = [col1, col2, col3]
         self.logger = logging.getLogger("nikesh")
         self.logger.setLevel(logging.INFO)
+
     def navigate(self):
         column_list = [[col1_xpath, self.columns[0]],
                        [col2_xpath, self.columns[1]],

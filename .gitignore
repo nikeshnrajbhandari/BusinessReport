@@ -1,8 +1,10 @@
 config_file/
 .idea
+br_venv/
 *.pyc
 *.csv
-br_venv/
+
 Authentication.csv
 Credentials.csv
 *.log
+.env
