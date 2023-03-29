@@ -9,7 +9,7 @@ from config import FILE_DIR, STAGE_DIR, SKU_PRE_DIR, SKU_RAW_DIR, ASIN_PRE_DIR, 
     WITHOUTASIN_HEADER
 from config.custom_error import IncorrectHeader
 
-logger = logging.getLogger("nikesh")
+logger = logging.getLogger("br_logger")
 logger.setLevel(logging.INFO)
 
 

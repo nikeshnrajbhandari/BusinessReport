@@ -18,7 +18,7 @@ class Scraper:
         self.fraction = fraction
         self.start_date = start_date
         self.end_date = end_date
-        self.logger = logging.getLogger("nikesh")
+        self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
 
     def scrape(self):

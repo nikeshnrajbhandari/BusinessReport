@@ -5,7 +5,7 @@ import pandas as pd
 from helpers.db_info import br_clients_rds
 from config import config_files, salesforce_id
 
-logger = logging.getLogger("nikesh")
+logger = logging.getLogger("br_logger")
 logger.setLevel(logging.INFO)
 def current_client():
     clients = pd.read_csv(os.path.join(config_files, 'All_clients.csv'))

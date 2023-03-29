@@ -13,7 +13,7 @@ class Login:
         self.creds = creds
         self.otp = otp
         self.marketplace = marketplace
-        self.logger = logging.getLogger("nikesh")
+        self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
 
     def sign_in(self):

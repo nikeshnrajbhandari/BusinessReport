@@ -8,7 +8,7 @@ class Navigation:
     def __init__(self, driver, col1, col2, col3):
         self.driver = driver
         self.columns = [col1, col2, col3]
-        self.logger = logging.getLogger("nikesh")
+        self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
 
     def navigate(self):

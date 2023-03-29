@@ -6,19 +6,12 @@ import pandas as pd
 from datetime import datetime
 from base_class import Driver
 from config import PULL_TYPE, headless
+from config.logger import get_logger, create_log
 from scrape import Login, Navigation, Scraper
 from helpers import make_dir, del_residue_files, date_range, current_client, credentials, authentication
 
-logger = logging.getLogger("nikesh")
-logging.basicConfig(format='%(asctime)s :%(levelname)-8s :%(message)s')
-logger.setLevel(logging.INFO)
-
-file_handler = logging.FileHandler(f'BusinessReport-{datetime.now().strftime("%Y-%m-%d")}.log')
-formatter = logging.Formatter('%(asctime)s: %(levelname)-8s: %(message)s')
-file_handler.setFormatter(formatter)
-console = logging.StreamHandler()
-logger.addHandler(console)
-logger.addHandler(file_handler)
+logger = get_logger('br_logger')
+create_log()
 
 
 def main():

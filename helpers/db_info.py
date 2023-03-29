@@ -1,4 +1,5 @@
 import os
+import logging
 import pymysql.cursors
 
 from dotenv import load_dotenv
@@ -6,7 +7,8 @@ from helpers.utils import decrypt_token
 
 load_dotenv()
 
-
+logger = logging.getLogger("br_logger")
+logger.setLevel(logging.INFO)
 def br_clients_rds():
     try:
         conn = pymysql.connect(database=os.environ.get("database"),

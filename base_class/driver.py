@@ -33,7 +33,7 @@ class Driver:
         # service = Service(executable_path=ChromeDriverManager().install())
         self._driver = webdriver.Chrome(service=service, options=options)
         self._driver.maximize_window()
-        self.logger = logging.getLogger("nikesh")
+        self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
 
     def element_locator(self, wait_param, wait_by=By.XPATH, wait_time=60):
