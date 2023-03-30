@@ -1,6 +1,8 @@
 import os
+import json
 import logging
 import pymysql.cursors
+
 
 from dotenv import load_dotenv
 from helpers.utils import decrypt_token
@@ -138,9 +140,9 @@ def br_clients_rds():
         cursor.execute(sql)
         clients = (cursor.fetchall())
         return clients
-    except Exception as err:
-        print(err)
+    except pymysql.Error as err:
+        logger.exception(err)
 
 
 if __name__ == '__main__':
-    pass
+    br_clients_rds()

@@ -24,7 +24,7 @@ class Navigation:
             if self.driver.element_locator(home_xpath):
                 pass
             else:
-                self.logger.info('Navigation Page not found.')
+                self.logger.error('Navigation Page not found.')
                 raise
 
     def selector(self, xpath, name_column):

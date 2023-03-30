@@ -2,6 +2,7 @@ import time
 import logging
 
 from config import *
+from config.custom_error import NoBusinessReport
 from datetime import datetime, timedelta
 from selenium.webdriver.common.by import By
 from helpers import move_rename, concat_files, header_check, del_empty_files, download_wait
@@ -9,12 +10,11 @@ from helpers import move_rename, concat_files, header_check, del_empty_files, do
 
 class Scraper:
 
-    def __init__(self, driver, seller_id, marketplace_id, name, wasin, fraction, start_date, end_date):
+    def __init__(self, driver, seller_id, marketplace_id, name, fraction, start_date, end_date):
         self.driver = driver
         self.seller_id = seller_id
         self.marketplace_id = marketplace_id
         self.name = name
-        self.wasin = wasin
         self.fraction = fraction
         self.start_date = start_date
         self.end_date = end_date
@@ -105,7 +105,8 @@ class Scraper:
         self.driver.rm_downloaded_item()
 
     def toggle_column(self):
-        self.driver.element_locator('//*[@id="root"]/div/div[2]/div/div[2]/div/div/kat-link')
+        if self.driver.element_locator('//*[@id="root"]/div/div[2]/div/div[2]/div/div/kat-link') is False:
+            raise NoBusinessReport(f"Can't load business report page for {self.name}")
         root1 = self.driver._driver.find_element(By.XPATH, '//*[@id="root"]/div/div[2]/div/div[2]/div/div/kat-link')
         shadow_root1 = self.driver.expand_shadow_element(root1)
         toggle_button = shadow_root1.find_element(By.CSS_SELECTOR, 'a')
@@ -119,21 +120,17 @@ class Scraper:
         for item in col_items:
             shadow_root1 = self.driver.expand_shadow_element(item)
             labels = shadow_root1.find_element(By.CSS_SELECTOR, 'kat-label')
-            print(labels.text)
             elements = shadow_root1.find_elements(By.CSS_SELECTOR, 'div')
-            print(elements)
             # if labels.text.upper() in col_list:
             if labels.text.upper() in [x.upper() for x in col_list]:
-                print(elements[0].get_attribute('class'))
                 if 'checkbox checked' != elements[0].get_attribute('class'):
                     try:
                         elements[0].click()
                     except Exception as err:
-                        print(err)
+                        self.logger.exception(err)
             else:
-                print(elements[0].get_attribute('class'))
                 if 'checkbox checked' == elements[0].get_attribute('class'):
                     try:
                         elements[0].click()
                     except Exception as err:
-                        print(err)
+                        self.logger.exception(err)

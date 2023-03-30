@@ -43,7 +43,7 @@ class Driver:
             )
             return True
         except TimeoutException:
-            self.logger.exception("Element not found.")
+            self.logger.error("Element not found.")
             return False
 
     def load_page(self, page, url='', wait_time=60):
@@ -55,7 +55,7 @@ class Driver:
             )
             self.logger.info(f"{page} page loaded")
         except TimeoutException:
-            self.logger.exception(f"{page} Loading taking too much time")
+            self.logger.error(f"{page} Loading taking too much time")
             raise
 
     def send_key(self, wait_param, key, wait_by=By.XPATH, wait_time=60):
@@ -65,7 +65,7 @@ class Driver:
             )
             self._driver.find_element(wait_by, wait_param).send_keys(key)
         except TimeoutException:
-            self.logger.exception("Field not found.")
+            self.logger.error("Field not found.")
             raise
 
     def btn_click(self, wait_param, wait_by=By.XPATH, wait_time=60):
@@ -75,7 +75,7 @@ class Driver:
             )
             self._driver.find_element(wait_by, wait_param).click()
         except TimeoutException:
-            self.logger.exception("Button not found.")
+            self.logger.error("Button not found.")
             raise
 
     def scroll_into_view(self, element):
@@ -92,7 +92,7 @@ class Driver:
                 if item.text == name_column:
                     item.click()
         except TimeoutException:
-            self.logger.exception("Field not found.")
+            self.logger.error("Field not found.")
             raise
 
     def every_downloads_chrome(self):
@@ -129,7 +129,7 @@ class Driver:
         try:
             WebDriverWait(shadow_root2, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '#remove')))
         except TimeoutException:
-            self.logger.exception("Couldn't find element")
+            self.logger.error("Couldn't find element")
         root3 = shadow_root2.find_element(By.CSS_SELECTOR, '#remove')
         shadow_root3 = self.expand_shadow_element(root3)
         close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')
