@@ -40,7 +40,7 @@ def br_download(client_list, dates, count=0):
                 login.asc_login()
                 navigation = Navigation(driver, item['col1'], item['col2'], item['col3'])
                 navigation.navigate()
-                logger.info(dates)
+                # logger.info(dates)
                 for date in dates:
                     scraper = Scraper(driver, item['seller_id'], item['marketplace_id'], item['name'], item['fraction'],
                                       date[0], date[1])

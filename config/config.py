@@ -29,4 +29,4 @@ salesforce_id = args.client
 PULL_TYPE = args.report_type
 
 # Driver config
-headless = False
+headless = True
