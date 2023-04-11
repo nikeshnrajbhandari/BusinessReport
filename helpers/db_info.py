@@ -145,4 +145,4 @@ def br_clients_rds():
 
 
 if __name__ == '__main__':
-    br_clients_rds()
+    print(br_clients_rds())

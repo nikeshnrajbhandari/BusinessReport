@@ -62,6 +62,7 @@ def del_empty_files(path):
     for file in files:
         df = pd.read_csv(join(path, file))
         if df.empty:
+            logger.warning('Empty file.')
             os.remove(join(path, file))
 
 

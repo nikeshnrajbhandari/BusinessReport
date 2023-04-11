@@ -1,5 +1,10 @@
+import sys
+import logging
 from config.arguments import get_args
 from os.path import dirname, abspath, join
+
+logger = logging.getLogger("br_logger")
+logger.setLevel(logging.INFO)
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
 FILE_DIR = join(BASE_DIR, 'BusinessReport')
@@ -27,6 +32,8 @@ WITHOUTASIN_HEADER = ['(Parent) ASIN', '(Child) ASIN', 'Title', 'Sessions - Mobi
 args = get_args()
 salesforce_id = args.client
 PULL_TYPE = args.report_type
-
+if PULL_TYPE in ['monthly_history', 'weekly_history'] and salesforce_id is None:
+    logger.warning("Select a specific client for historical pull")
+    exit(1)
 # Driver config
 headless = True

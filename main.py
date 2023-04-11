@@ -1,17 +1,17 @@
 import os
 import time
-import logging
 import pandas as pd
 
 from datetime import datetime
 from base_class import Driver
-from config import PULL_TYPE, headless
-from config.custom_error import NoBusinessReport
 from config.logger import get_logger
+from config import PULL_TYPE, headless
 from scrape import Login, Navigation, Scraper
+from config.custom_error import NoBusinessReport
 from helpers import make_dir, del_residue_files, date_range, current_client, credentials, authentication
 
 logger = get_logger('br_logger', f'Business_Report-{datetime.now().strftime("%Y-%m-%d")}.log')
+
 
 def main():
     dates = list()
