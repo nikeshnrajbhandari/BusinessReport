@@ -29,8 +29,8 @@ class Driver:
 
         options.add_experimental_option("prefs", prefs)
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        service = Service(executable_path='C:/Driver/chromedriver')
-        # service = Service(executable_path=ChromeDriverManager().install())
+        # service = Service(executable_path='C:/Driver/chromedriver')
+        service = Service(executable_path=ChromeDriverManager().install())
         self._driver = webdriver.Chrome(service=service, options=options)
         self._driver.maximize_window()
         self.logger = logging.getLogger("br_logger")

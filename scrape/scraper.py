@@ -71,7 +71,7 @@ class Scraper:
                 url.format(s_date=str(start_date.strftime("%Y-%m-%d")), e_date=str(start_date.strftime("%Y-%m-%d"))),
                 self.marketplace_id)
             start_date = start_date + timedelta(days=1)
-        concat_files(self.STAGE_DIR)
+        concat_files(self.name ,self.STAGE_DIR)
 
     def sku_download(self, url, region):
         self.driver.load_page('SKU', url)
