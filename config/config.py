@@ -6,6 +6,8 @@ from os.path import dirname, abspath, join
 logger = logging.getLogger("br_logger")
 logger.setLevel(logging.INFO)
 
+headless = True
+
 BASE_DIR = dirname(dirname(abspath(__file__)))
 FILE_DIR = join(BASE_DIR, 'BusinessReport')
 SKU_PRE_DIR = join(FILE_DIR, 'SKU_PRE')
@@ -33,6 +35,6 @@ salesforce_id = args.client
 PULL_TYPE = args.report_type
 if PULL_TYPE in ['monthly_history', 'weekly_history'] and salesforce_id is None:
     logger.warning("Select a specific client for historical pull")
-    exit(1)
+    quit()
 # Driver config
-headless = False
+

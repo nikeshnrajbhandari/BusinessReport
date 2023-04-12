@@ -19,6 +19,61 @@ from helpers import make_dir, del_residue_files, date_range, current_client, cre
 logger = get_logger('br_logger', f'Business_Report-{datetime.now().strftime("%Y-%m-%d")}.log')
 
 
+def main():
+    global failed
+    failed = []
+    dates = list()
+    make_dir()
+    del_residue_files()
+
+    if PULL_TYPE.lower() in ['weekly', 'monthly', 'monthly_history', 'weekly_history']:
+        dates = date_range(PULL_TYPE)
+
+    if os.path.isfile('config_file/Failed_File.csv'):
+        os.remove('config_file/Failed_File.csv')
+
+    client_list = current_client()
+    n_process = 4
+    chunked_list = [client_list[i::4] for i in range(4)]
+    folders = ['stage1', 'stage2', 'stage3', 'stage4']
+
+    queue = Queue()
+    barrier = Barrier(n_process)
+
+    count = 0
+    while count < 3:
+        try:
+            if len(failed) != 0:
+                logger.info('Resuming for failed files.')
+                chunked_list = [failed[i::4] for i in range(4)]
+        finally:
+            consumers = [Thread(target=consumer, args=(queue, dates, folder,)) for folder in folders]
+
+            producers = [Thread(target=producer, args=(barrier, queue, chunks, randint(0, 30))) for chunks in
+                         chunked_list]
+
+            for threads in producers:
+                threads.start()
+            for threads in consumers:
+                threads.start()
+
+            for threads in producers:
+                threads.join()
+            for threads in consumers:
+                threads.join()
+            count = count + 1
+
+    if len(failed) > 0:
+        failed_file = pd.DataFrame(failed)
+        failed_file.to_csv(os.path.join('config_file', f'Failed_File-{datetime.now().strftime("%Y-%m-%d")}.csv'),
+                           index=False, lineterminator='\n')
+
+    logger.info('Download process completed!')
+    for folder in folders:
+        os.remove(join(FILE_DIR, folder))
+    quit()
+
+
 def producer(barrier, queue, clients, identifier):
     PLVL = 15
     logging.addLevelName(PLVL, 'Producer')
@@ -62,8 +117,8 @@ def br_download(item, dates, folder):
                 scraper.scrape()
             logger.info(f"Download complete for {item['name']}")
             time.sleep(5)
-        # except NoBusinessReport as err:
-        #     print(err)
+        except NoBusinessReport as err:
+            print(err)
         except Exception as err:
             logger.error(f"Failed to download for {item['name']}")
             logger.exception(err)
@@ -75,60 +130,6 @@ def br_download(item, dates, folder):
             except Exception as err:
                 logger.exception(err)
                 pass
-
-
-def main():
-    global failed
-    failed = []
-    dates = list()
-    make_dir()
-    del_residue_files()
-
-    if PULL_TYPE.lower() in ['weekly', 'monthly', 'monthly_history', 'weekly_history']:
-        dates = date_range(PULL_TYPE)
-
-    if os.path.isfile('config_file/Failed_File.csv'):
-        os.remove('config_file/Failed_File.csv')
-
-    client_list = current_client()
-    n_process = 4
-    chunked_list = [client_list[i::4] for i in range(4)]
-    folders = ['stage1', 'stage2', 'stage3', 'stage4']
-
-    queue = Queue()
-    barrier = Barrier(n_process)
-
-    count = 0
-    while count < 3:
-        try:
-            if len(failed) != 0:
-                logger.info('Resuming for failed files.')
-                chunked_list = [failed[i::4] for i in range(4)]
-        finally:
-            consumers = [Thread(target=consumer, args=(queue, dates, folder,)) for folder in folders]
-
-            producers = [Thread(target=producer, args=(barrier, queue, chunks, randint(0, 30))) for chunks in
-                         chunked_list]
-
-            for threads in producers:
-                threads.start()
-            for threads in consumers:
-                threads.start()
-
-            for threads in producers:
-                threads.join()
-            for threads in consumers:
-                threads.join()
-            # if count == 0:
-            #     failed = [{'a': '1'}, {'b': '2'}, {'c': '3'}]
-            # else:
-            #     failed = []
-            count = count + 1
-
-    logger.info('Download process completed!')
-    for folder in folders:
-        os.remove(join(FILE_DIR, folder))
-    quit()
 
 
 if __name__ == '__main__':
