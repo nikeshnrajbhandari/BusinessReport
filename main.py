@@ -75,31 +75,27 @@ def main():
 
 
 def producer(barrier, queue, clients, identifier):
-    PLVL = 15
-    logging.addLevelName(PLVL, 'Producer')
-    logger.log(PLVL, f'Producer {identifier}: Running')
+    logger.debug(f'Producer {identifier}: Running')
     if len(clients) != 0:
         for client in clients:
             queue.put(client)
     barrier.wait()
     queue.put(None)
-    logger.log(PLVL, f'Producer {identifier}: Done')
+    logger.debug(f'Producer {identifier}: Done')
 
 
 def consumer(queue, dates, folder):
-    CLVL = 15
-    logging.addLevelName(CLVL, 'Consumer')
-    logger.log(CLVL, f'Consumer {folder}: Running')
+    logger.debug(f'Consumer {folder}: Running')
     os.makedirs(join(FILE_DIR, folder), exist_ok=True)
     while True:
         item = queue.get()
         if item is None:
             queue.put(item)
             break
-        logger.log(CLVL, f'Consumer {folder} got :{item}')
+        logger.debug(f'Consumer {folder} got :{item}')
         br_download(item, dates, join(FILE_DIR, folder))
 
-    logger.log(CLVL, f'Consumer {folder}: Done')
+    logger.debug(f'Consumer {folder}: Done')
 
 
 def br_download(item, dates, folder):
