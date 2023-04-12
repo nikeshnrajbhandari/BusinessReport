@@ -15,10 +15,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 class Driver:
 
-    def __init__(self, headless=False):
+    def __init__(self, folder, headless=False):
         options = ChromeOptions()
         prefs = {
-            'download.default_directory': STAGE_DIR,
+            'download.default_directory': folder,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
             "safebrowsing_for_trusted_sources_enabled": False,

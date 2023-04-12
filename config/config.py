@@ -8,7 +8,6 @@ logger.setLevel(logging.INFO)
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
 FILE_DIR = join(BASE_DIR, 'BusinessReport')
-STAGE_DIR = join(FILE_DIR, 'STAGE')
 SKU_PRE_DIR = join(FILE_DIR, 'SKU_PRE')
 SKU_RAW_DIR = join(FILE_DIR, 'SKU_RAW')
 ASIN_STAGE_DIR = join(FILE_DIR, 'ASIN_STAGE')
@@ -36,4 +35,4 @@ if PULL_TYPE in ['monthly_history', 'weekly_history'] and salesforce_id is None:
     logger.warning("Select a specific client for historical pull")
     exit(1)
 # Driver config
-headless = True
+headless = False

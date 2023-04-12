@@ -25,7 +25,7 @@ class Login:
         for param in self.otp:
             otp = pyotp.parse_uri(decrypt_token(param))
             try:
-                self.driver.load_page('Authentication')
+                self.driver.load_page(f'{self.email} Authentication')
                 self.driver.send_key(auth_xpath, otp.now())
                 self.driver.btn_click(auth_btn_xpath)
                 if self.driver.element_locator(nav_header_xpath) is True:

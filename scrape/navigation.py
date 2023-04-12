@@ -17,7 +17,7 @@ class Navigation:
                        [col3_xpath, self.columns[2]]]
 
         try:
-            self.driver.load_page('Navigation')
+            self.driver.load_page(f'{self.columns[0]} Navigation')
             for items in column_list:
                 self.selector(items[0], items[1])
         except Exception as err:
