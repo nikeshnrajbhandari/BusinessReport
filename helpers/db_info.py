@@ -1,5 +1,6 @@
+"""Generates clients eligible for Business Report pull"""
+
 import os
-import json
 import logging
 import pymysql.cursors
 

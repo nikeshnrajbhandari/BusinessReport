@@ -1,3 +1,5 @@
+"""Creates date range according to date argument"""
+
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 

@@ -1,3 +1,5 @@
+"""Handles operation in folder"""
+
 import os
 import glob
 import time

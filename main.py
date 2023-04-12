@@ -1,7 +1,7 @@
 """Testing multithreading producer_consumer"""
+
 import os
 import time
-import logging
 import pandas as pd
 
 from queue import Queue
@@ -41,6 +41,8 @@ def main():
     barrier = Barrier(n_process)
 
     count = 0
+
+    # Producer-Consumer Implementation, will retry if there are failed files.
     while count < 3:
         try:
             if len(failed) != 0:
@@ -75,6 +77,7 @@ def main():
 
 
 def producer(barrier, queue, clients, identifier):
+    # Producer, puts a client into share buffer, and uses barrier and will close the producer
     logger.debug(f'Producer {identifier}: Running')
     if len(clients) != 0:
         for client in clients:
@@ -85,20 +88,30 @@ def producer(barrier, queue, clients, identifier):
 
 
 def consumer(queue, dates, folder):
+    # Consumer, Will create stage directories, and get client from shared buffer to download
     logger.debug(f'Consumer {folder}: Running')
-    os.makedirs(join(FILE_DIR, folder), exist_ok=True)
+    stage_dir = join(FILE_DIR, folder)
+    os.makedirs(stage_dir, exist_ok=True)
     while True:
         item = queue.get()
+        # Checks if there shared buffer is empty, and closes the queue if None.
         if item is None:
             queue.put(item)
             break
         logger.debug(f'Consumer {folder} got :{item}')
-        br_download(item, dates, join(FILE_DIR, folder))
-
+        try:
+            br_download(item, dates, stage_dir)
+        except Exception as err:
+            logger.error(err)
+        finally:
+            # Clears the stage directory
+            for each_file in os.listdir(stage_dir):
+                os.remove(join(stage_dir, each_file))
     logger.debug(f'Consumer {folder}: Done')
 
 
 def br_download(item, dates, folder):
+    # Business Report scraping
     if item['active'] == 1:
         driver = Driver(folder, headless)
         try:
@@ -114,6 +127,7 @@ def br_download(item, dates, folder):
             logger.info(f"Download complete for {item['name']}")
             time.sleep(5)
         except NoBusinessReport as err:
+            # When there is no business report section, will not flag as failed.
             print(err)
         except Exception as err:
             logger.error(f"Failed to download for {item['name']}")

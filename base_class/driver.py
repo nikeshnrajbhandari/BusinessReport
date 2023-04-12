@@ -1,4 +1,4 @@
-import logging
+""" Selenium browser class"""
 
 from config import *
 from selenium import webdriver
@@ -8,13 +8,11 @@ from selenium.webdriver import ChromeOptions
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class Driver:
-
     def __init__(self, folder, headless=False):
         options = ChromeOptions()
         prefs = {
@@ -95,6 +93,7 @@ class Driver:
             self.logger.error("Field not found.")
             raise
 
+    # Checks chrome download to verify the status of the download
     def every_downloads_chrome(self):
         if not self._driver.current_url.startswith("chrome://downloads"):
             self._driver.get("chrome://downloads/")
@@ -120,6 +119,7 @@ class Driver:
         shadow_root = self._driver.execute_script('return arguments[0].shadowRoot', element)
         return shadow_root
 
+    # Clears chorme download list
     def rm_downloaded_item(self):
         root1 = self._driver.find_element(By.TAG_NAME, 'downloads-manager')
         shadow_root1 = self.expand_shadow_element(root1)

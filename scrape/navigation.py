@@ -1,4 +1,4 @@
-import logging
+"""Custom made foe Seller central navigation page"""
 
 from config import *
 
@@ -20,7 +20,7 @@ class Navigation:
             self.driver.load_page(f'{self.columns[0]} Navigation')
             for items in column_list:
                 self.selector(items[0], items[1])
-        except Exception as err:
+        except Exception:
             if self.driver.element_locator(home_xpath):
                 pass
             else:

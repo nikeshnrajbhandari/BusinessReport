@@ -1,3 +1,5 @@
+"""Arguments list"""
+
 import argparse
 from argparse import RawTextHelpFormatter
 

@@ -1,15 +1,15 @@
+"""Scrapes SKU and Without ASIN"""
+
 import time
-import logging
 
 from config import *
-from config.custom_error import NoBusinessReport
 from datetime import datetime, timedelta
 from selenium.webdriver.common.by import By
+from config.custom_error import NoBusinessReport
 from helpers import move_rename, concat_files, header_check, del_empty_files, download_wait
 
 
 class Scraper:
-
     def __init__(self, driver, seller_id, marketplace_id, name, fraction, start_date, end_date, STAGE_DIR):
         self.driver = driver
         self.seller_id = seller_id
@@ -64,6 +64,7 @@ class Scraper:
         header_check('WITHOUTASIN')
         time.sleep(5)
 
+    # For clients with heavy data, which may need to be downloaded in chunks
     def fraction_download(self, url, start_date, end_date):
         while start_date <= end_date:
             self.logger.info(f'[{self.name}] Download date: {str(start_date.strftime("%Y-%m-%d"))}')
@@ -71,10 +72,10 @@ class Scraper:
                 url.format(s_date=str(start_date.strftime("%Y-%m-%d")), e_date=str(start_date.strftime("%Y-%m-%d"))),
                 self.marketplace_id)
             start_date = start_date + timedelta(days=1)
-        concat_files(self.name ,self.STAGE_DIR)
+        concat_files(self.name, self.STAGE_DIR)
 
     def sku_download(self, url, region):
-        self.driver.load_page('SKU', url)
+        self.driver.load_page(f'[{self.name}] SKU', url)
         handles_before = self.driver._driver.window_handles
         self.toggle_column()
         self.col_items(SKU_HEADER)
@@ -90,7 +91,7 @@ class Scraper:
         self.driver.rm_downloaded_item()
 
     def withoutasin_download(self, url, region):
-        self.driver.load_page('WithoutASIN', url)
+        self.driver.load_page(f'[{self.name}] WithoutASIN', url)
         handles_before = self.driver._driver.window_handles
         self.toggle_column()
         self.col_items(WITHOUTASIN_HEADER)

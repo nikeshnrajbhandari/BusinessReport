@@ -7,6 +7,8 @@ from config import config_files, salesforce_id
 
 logger = logging.getLogger("br_logger")
 logger.setLevel(logging.INFO)
+
+
 def current_client():
     clients = pd.read_csv(os.path.join(config_files, 'All_clients.csv'))
     # curr_client = pd.read_csv(os.path.join(config_files, 'Client_list.csv'))
@@ -39,7 +41,7 @@ def authentication(check_email):
 def credentials(check_name):
     cred = pd.read_csv(os.path.join(config_files, 'Credentials.csv'))
     df_cred = pd.DataFrame(cred)
-    return df_cred.loc[df_cred['name'].str.lower() == check_name.lower()]['credentails'].to_string(index=False)
+    return df_cred.loc[df_cred['name'].str.lower() == check_name.lower()]['credentials'].to_string(index=False)
 
 
 if __name__ == '__main__':

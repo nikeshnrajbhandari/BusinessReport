@@ -1,3 +1,5 @@
+"""Logger using logging"""
+
 import os
 import logging
 from config.config import BASE_DIR

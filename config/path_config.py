@@ -1,4 +1,4 @@
-# XPath and key URL
+"""XPath and key URL"""
 
 # Browser URL
 na_url = "https://sellercentral.amazon.com/signin?ref_=scus_soa_wp_signin_n&initialSessionID=143-2786064-8692101&ld=SCUSWPDirect"

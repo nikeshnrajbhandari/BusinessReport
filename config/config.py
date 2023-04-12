@@ -1,4 +1,5 @@
-import sys
+"""Project level configurations"""
+
 import logging
 from config.arguments import get_args
 from os.path import dirname, abspath, join

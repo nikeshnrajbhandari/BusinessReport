@@ -1,5 +1,6 @@
+"""Login handler."""
+
 import pyotp
-import logging
 
 from config import *
 from helpers.utils import decrypt_token

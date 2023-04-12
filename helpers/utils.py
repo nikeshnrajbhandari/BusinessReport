@@ -1,3 +1,5 @@
+"""Encryption decryption module"""
+
 import traceback
 import base64
 import pandas as pd
