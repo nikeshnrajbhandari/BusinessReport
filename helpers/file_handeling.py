@@ -28,14 +28,14 @@ def del_residue_files():
             os.remove(join(each_dir, each_file))
 
 
-def download_wait(STAGE_DIR):
+def download_wait(name,STAGE_DIR):
     logger.info("Waiting for downloads")
     dl_wait = True
     while dl_wait:
         time.sleep(1)
         files = os.listdir(STAGE_DIR)
         if not any(file in '.crdownload' for file in files):
-            logger.info("Downloaded!")
+            logger.info(f"[{name}] Downloaded!")
             dl_wait = False
 
 
