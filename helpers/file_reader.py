@@ -13,6 +13,8 @@ def current_client():
     clients = pd.read_csv(os.path.join(config_files, 'All_clients.csv'))
     # curr_client = pd.read_csv(os.path.join(config_files, 'Client_list.csv'))
     curr_client = pd.DataFrame(br_clients_rds())
+    # curr_client = [{'ID': '0015000001rCn3RAAS'},
+    #                ]
     df_clients_main = pd.DataFrame(clients)
     df_clients_list = pd.DataFrame(curr_client)
 

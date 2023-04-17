@@ -46,6 +46,7 @@ def main():
     while count < 3:
         try:
             if len(failed) != 0:
+                time.sleep(800)
                 logger.info('Resuming for failed files.')
                 chunked_list = [failed[i::4] for i in range(4)]
         finally:
@@ -72,24 +73,28 @@ def main():
 
     logger.info('Download process completed!')
     for folder in folders:
-        os.remove(join(FILE_DIR, folder))
+        try:
+
+            os.remove(join(FILE_DIR, folder))
+        except PermissionError:
+            print(f'{join(FILE_DIR, folder)}: File/Folder in use')
     quit()
 
 
 def producer(barrier, queue, clients, identifier):
     # Producer, puts a client into share buffer, and uses barrier and will close the producer
-    logger.debug(f'Producer {identifier}: Running')
+    logger.info(f'Producer {identifier}: Running')
     if len(clients) != 0:
         for client in clients:
             queue.put(client)
     barrier.wait()
     queue.put(None)
-    logger.debug(f'Producer {identifier}: Done')
+    logger.info(f'Producer {identifier}: Done')
 
 
 def consumer(queue, dates, folder):
     # Consumer, Will create stage directories, and get client from shared buffer to download
-    logger.debug(f'Consumer {folder}: Running')
+    logger.info(f'Consumer {folder}: Running')
     stage_dir = join(FILE_DIR, folder)
     os.makedirs(stage_dir, exist_ok=True)
     while True:
@@ -98,7 +103,7 @@ def consumer(queue, dates, folder):
         if item is None:
             queue.put(item)
             break
-        logger.debug(f'Consumer {folder} got :{item}')
+        logger.info(f'Consumer {folder} got :{item}')
         try:
             br_download(item, dates, stage_dir)
         except Exception as err:
@@ -107,7 +112,7 @@ def consumer(queue, dates, folder):
             # Clears the stage directory
             for each_file in os.listdir(stage_dir):
                 os.remove(join(stage_dir, each_file))
-    logger.debug(f'Consumer {folder}: Done')
+    logger.info(f'Consumer {folder}: Done')
 
 
 def br_download(item, dates, folder):

@@ -76,7 +76,7 @@ class Scraper:
 
     def sku_download(self, url, region):
         self.driver.load_page(f'[{self.name}] SKU', url)
-        handles_before = self.driver._driver.window_handles
+        handles_before = self.driver.driver.window_handles
         self.toggle_column()
         self.col_items(SKU_HEADER)
         if region in {'ATVPDKIKX0DER', 'A2EUQ1WTGCTBG2', 'A1AM78C64UM0Y8'}:
@@ -92,7 +92,7 @@ class Scraper:
 
     def withoutasin_download(self, url, region):
         self.driver.load_page(f'[{self.name}] WithoutASIN', url)
-        handles_before = self.driver._driver.window_handles
+        handles_before = self.driver.driver.window_handles
         self.toggle_column()
         self.col_items(WITHOUTASIN_HEADER)
         if region in {'ATVPDKIKX0DER', 'A2EUQ1WTGCTBG2', 'A1AM78C64UM0Y8'}:
@@ -109,15 +109,15 @@ class Scraper:
     def toggle_column(self):
         if self.driver.element_locator('//*[@id="root"]/div/div[2]/div/div[2]/div/div/kat-link') is False:
             raise NoBusinessReport(f"Can't load business report page for {self.name}")
-        root1 = self.driver._driver.find_element(By.XPATH, '//*[@id="root"]/div/div[2]/div/div[2]/div/div/kat-link')
+        root1 = self.driver.driver.find_element(By.XPATH, '//*[@id="root"]/div/div[2]/div/div[2]/div/div/kat-link')
         shadow_root1 = self.driver.expand_shadow_element(root1)
         toggle_button = shadow_root1.find_element(By.CSS_SELECTOR, 'a')
         toggle_button.click()
 
     def col_items(self, col_list):
         self.driver.element_locator('//*[@id="root"]/div/div/div/div/div/div/div/kat-checkbox')
-        col_items = self.driver._driver.find_elements(By.XPATH,
-                                                      '//*[@id="root"]/div/div/div/div/div/div/div/kat-checkbox')
+        col_items = self.driver.driver.find_elements(By.XPATH,
+                                                     '//*[@id="root"]/div/div/div/div/div/div/div/kat-checkbox')
 
         for item in col_items:
             shadow_root1 = self.driver.expand_shadow_element(item)

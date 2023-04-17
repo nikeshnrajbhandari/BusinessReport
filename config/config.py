@@ -37,5 +37,3 @@ PULL_TYPE = args.report_type
 if PULL_TYPE in ['monthly_history', 'weekly_history'] and salesforce_id is None:
     logger.warning("Select a specific client for historical pull")
     quit()
-# Driver config
-

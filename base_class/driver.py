@@ -29,14 +29,14 @@ class Driver:
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         # service = Service(executable_path='C:/Driver/chromedriver')
         service = Service(executable_path=ChromeDriverManager().install())
-        self._driver = webdriver.Chrome(service=service, options=options)
-        self._driver.maximize_window()
+        self.driver = webdriver.Chrome(service=service, options=options)
+        self.driver.maximize_window()
         self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
 
     def element_locator(self, wait_param, wait_by=By.XPATH, wait_time=60):
         try:
-            WebDriverWait(self._driver, wait_time).until(
+            WebDriverWait(self.driver, wait_time).until(
                 EC.visibility_of_element_located((wait_by, wait_param))
             )
             return True
@@ -46,9 +46,9 @@ class Driver:
 
     def load_page(self, page, url='', wait_time=60):
         if url != '':
-            self._driver.get(url)
+            self.driver.get(url)
         try:
-            WebDriverWait(self._driver, wait_time).until(
+            WebDriverWait(self.driver, wait_time).until(
                 lambda driver: driver.execute_script("return document.readyState") == "complete"
             )
             self.logger.info(f"{page} page loaded")
@@ -58,20 +58,20 @@ class Driver:
 
     def send_key(self, wait_param, key, wait_by=By.XPATH, wait_time=60):
         try:
-            WebDriverWait(self._driver, wait_time).until(
+            WebDriverWait(self.driver, wait_time).until(
                 EC.visibility_of_element_located((wait_by, wait_param))
             )
-            self._driver.find_element(wait_by, wait_param).send_keys(key)
+            self.driver.find_element(wait_by, wait_param).send_keys(key)
         except TimeoutException:
             self.logger.error("Field not found.")
             raise
 
     def btn_click(self, wait_param, wait_by=By.XPATH, wait_time=60):
         try:
-            WebDriverWait(self._driver, wait_time).until(
+            WebDriverWait(self.driver, wait_time).until(
                 EC.visibility_of_element_located((wait_by, wait_param))
             )
-            self._driver.find_element(wait_by, wait_param).click()
+            self.driver.find_element(wait_by, wait_param).click()
         except TimeoutException:
             self.logger.error("Button not found.")
             raise
@@ -81,24 +81,24 @@ class Driver:
 
     def column_element_finder(self, wait_param, name_column, wait_by=By.XPATH, wait_time=60):
         try:
-            WebDriverWait(self._driver, wait_time).until(
+            WebDriverWait(self.driver, wait_time).until(
                 EC.visibility_of_element_located((wait_by, wait_param))
             )
-            elements = self._driver.find_elements(wait_by, wait_param)
+            elements = self.driver.find_elements(wait_by, wait_param)
             for item in elements:
-                item.location_once_scrolled_into_view
+                self.scroll_into_view(item)
                 if item.text == name_column:
                     item.click()
         except TimeoutException:
             self.logger.error("Field not found.")
             raise
 
-    # Checks chrome download to verify the status of the download
+    # Checks Chrome download to verify the status of the download
     def every_downloads_chrome(self):
-        if not self._driver.current_url.startswith("chrome://downloads"):
-            self._driver.get("chrome://downloads/")
+        if not self.driver.current_url.startswith("chrome://downloads"):
+            self.driver.get("chrome://downloads/")
         while True:
-            path = self._driver.execute_script("""
+            path = self.driver.execute_script("""
                 var items = document.querySelector('downloads-manager')
                     .shadowRoot.getElementById('downloadsList').items;
                 if (items.every(e => e.state === "COMPLETE"))
@@ -110,18 +110,18 @@ class Driver:
 
     @contextmanager
     def wait_for_new_window(self, handles, wait_time=60):
-        WebDriverWait(self._driver, wait_time).until(
+        WebDriverWait(self.driver, wait_time).until(
             lambda driver: len(handles) != len(driver.window_handles))
-        WebDriverWait(self._driver, wait_time).until(
+        WebDriverWait(self.driver, wait_time).until(
             lambda driver: len(handles) == len(driver.window_handles))
 
     def expand_shadow_element(self, element):
-        shadow_root = self._driver.execute_script('return arguments[0].shadowRoot', element)
+        shadow_root = self.driver.execute_script('return arguments[0].shadowRoot', element)
         return shadow_root
 
     # Clears chorme download list
     def rm_downloaded_item(self):
-        root1 = self._driver.find_element(By.TAG_NAME, 'downloads-manager')
+        root1 = self.driver.find_element(By.TAG_NAME, 'downloads-manager')
         shadow_root1 = self.expand_shadow_element(root1)
 
         root2 = shadow_root1.find_element(By.CSS_SELECTOR, '#frb0')
@@ -136,5 +136,5 @@ class Driver:
         close_button.click()
 
     def close_driver(self):
-        self._driver.close()
-        self._driver.quit()
+        self.driver.close()
+        self.driver.quit()
