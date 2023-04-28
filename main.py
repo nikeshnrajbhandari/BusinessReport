@@ -10,13 +10,13 @@ from threading import Thread
 from base_class import Driver
 from datetime import datetime
 from threading import Barrier
-from config.logger import get_logger
+from helpers.logger import get_logger
 from config import PULL_TYPE, headless, FILE_DIR, join
 from scrape import Login, Navigation, Scraper
 from config.custom_error import NoBusinessReport
 from helpers import make_dir, del_residue_files, date_range, current_client, credentials, authentication
 
-logger = get_logger('br_logger', f'Business_Report-{datetime.now().strftime("%Y-%m-%d")}.log')
+logger = get_logger('br_logger')
 
 
 def main():
@@ -74,7 +74,6 @@ def main():
     logger.info('Download process completed!')
     for folder in folders:
         try:
-
             os.remove(join(FILE_DIR, folder))
         except PermissionError:
             print(f'{join(FILE_DIR, folder)}: File/Folder in use')

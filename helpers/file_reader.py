@@ -19,6 +19,7 @@ def current_client():
     df_clients_list = pd.DataFrame(curr_client)
 
     if salesforce_id is not None:
+
         client_dict = {'salesforce_id': f'{salesforce_id}'}
         curr_client_record = df_clients_main.loc[
             df_clients_main['salesforce_id'] == client_dict.get('salesforce_id')].to_dict('records')
