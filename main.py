@@ -46,7 +46,7 @@ def main():
     while count < 3:
         try:
             if len(failed) != 0:
-                print(failed)
+                logger.info(failed)
                 logger.info('Waiting for failed files.')
                 time.sleep(800)
                 logger.info('Resuming for failed files.')
