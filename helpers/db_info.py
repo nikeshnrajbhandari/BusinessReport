@@ -25,7 +25,8 @@ def br_clients_rds():
         cursor = conn.cursor()
         sql = """ 
                 select
-                    main.ID
+                    main.ID,
+                    main.Account_name
                 from
                     (
                         select
@@ -141,10 +142,15 @@ def br_clients_rds():
             """
         cursor.execute(sql)
         clients = (cursor.fetchall())
-        return clients
+        client_list = []
+        for client in clients:
+            client_list.append({'ID': client['ID']})
+            print(client)
+        return client_list
+
     except pymysql.Error as err:
         logger.exception(err)
 
 
 if __name__ == '__main__':
-    print(br_clients_rds())
+    br_clients_rds()

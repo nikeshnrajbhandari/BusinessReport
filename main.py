@@ -3,7 +3,7 @@
 import os
 import time
 import pandas as pd
-
+from helpers import current_client
 from queue import Queue
 from random import randint
 from threading import Thread
@@ -14,7 +14,7 @@ from helpers.logger import get_logger
 from config import PULL_TYPE, headless, FILE_DIR, join
 from scrape import Login, Navigation, Scraper
 from config.custom_error import NoBusinessReport
-from helpers import make_dir, del_residue_files, date_range, current_client, credentials, authentication
+from helpers import make_dir, del_residue_files, date_range, credentials, authentication
 
 logger = get_logger('br_logger')
 
@@ -46,6 +46,8 @@ def main():
     while count < 3:
         try:
             if len(failed) != 0:
+                print(failed)
+                logger.info('Waiting for failed files.')
                 time.sleep(800)
                 logger.info('Resuming for failed files.')
                 chunked_list = [failed[i::4] for i in range(4)]
@@ -74,6 +76,7 @@ def main():
     logger.info('Download process completed!')
     for folder in folders:
         try:
+            time.sleep(120)
             os.remove(join(FILE_DIR, folder))
         except PermissionError:
             print(f'{join(FILE_DIR, folder)}: File/Folder in use')
@@ -106,7 +109,7 @@ def consumer(queue, dates, folder):
         try:
             br_download(item, dates, stage_dir)
         except Exception as err:
-            logger.error(err)
+            logger.exception(err)
         finally:
             # Clears the stage directory
             for each_file in os.listdir(stage_dir):
@@ -132,7 +135,7 @@ def br_download(item, dates, folder):
             time.sleep(5)
         except NoBusinessReport as err:
             # When there is no business report section, will not flag as failed.
-            print(err)
+            logger.exception(err)
         except Exception as err:
             logger.error(f"Failed to download for {item['name']}")
             logger.exception(err)
