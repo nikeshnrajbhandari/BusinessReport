@@ -33,13 +33,13 @@ class Scraper:
         else:
             self.driver.load_page(f'[{self.name}] Business Report', eu_br)
             self.sku_download(eu_sku.format(s_date=start_date, e_date=end_date), self.marketplace_id)
-        time.sleep(5)
+        time.sleep(10)
         move_rename(filename, self.STAGE_DIR, SKU_PRE_DIR)
         time.sleep(5)
         del_empty_files(SKU_PRE_DIR)
         time.sleep(5)
         header_check('SKU')
-        time.sleep(5)
+        time.sleep(20)
         if self.marketplace_id in {'ATVPDKIKX0DER', 'A2EUQ1WTGCTBG2', 'A1AM78C64UM0Y8'}:
             self.driver.load_page(f'[{self.name}] Business Report', na_br)
             if self.fraction == 0:
@@ -56,13 +56,13 @@ class Scraper:
             elif self.fraction == 1:
                 self.fraction_download(eu_asin, datetime.strptime(start_date, "%Y-%m-%d"),
                                        datetime.strptime(end_date, "%Y-%m-%d"))
-        time.sleep(5)
+        time.sleep(10)
         move_rename(filename, self.STAGE_DIR, ASIN_PRE_DIR)
         time.sleep(5)
         del_empty_files(ASIN_PRE_DIR)
         time.sleep(5)
         header_check('WITHOUTASIN')
-        time.sleep(5)
+        time.sleep(20)
 
     # For clients with heavy data, which may need to be downloaded in chunks
     def fraction_download(self, url, start_date, end_date):

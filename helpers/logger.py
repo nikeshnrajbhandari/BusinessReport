@@ -6,14 +6,19 @@ from datetime import datetime
 from config.config import BASE_DIR
 
 
-def get_logger(name, level=logging.INFO):
+def init_logger(name):
     logger = logging.getLogger(name)
-    logging.basicConfig(level=level, format='%(asctime)s :%(levelname)-8s :%(message)s')
-    logger.setLevel(level)
-    log_file = f'Business_Report-{datetime.now().strftime("%Y-%m-%d")}.log'
-    file_handler = logging.FileHandler(
-        filename=os.path.join(BASE_DIR, 'logs', log_file))
-    formatter = logging.Formatter('%(asctime)s: %(levelname)-8s: %(message)s')
-    file_handler.setFormatter(formatter)
-    logging.getLogger().addHandler(file_handler)
+    fmt = '%(asctime)s : [%(funcName)-20s] : [%(levelname)-8s] : %(message)s'
+    logging.basicConfig(level=logging.INFO, format=fmt)
+    logger.setLevel(logging.INFO)
+    log_file_info = f'Business_Report-{datetime.now().strftime("%Y-%m-%d")}.log'
+    log_file_error = f'Business_Report-error-{datetime.now().strftime("%Y-%m-%d")}.log'
+    log_file = [(log_file_info, logging.INFO), (log_file_error, logging.ERROR)]
+    for file_name, level in log_file:
+        file_handler = logging.FileHandler(
+            filename=os.path.join(BASE_DIR, 'logs', file_name))
+        formatter = logging.Formatter(fmt)
+        file_handler.setFormatter(formatter)
+        file_handler.setLevel(level)
+        logger.addHandler(file_handler)
     return logger

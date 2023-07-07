@@ -10,16 +10,19 @@ from threading import Thread
 from base_class import Driver
 from datetime import datetime
 from threading import Barrier
-from helpers.logger import get_logger
-from config import PULL_TYPE, headless, FILE_DIR, join
+from helpers.logger import init_logger
 from scrape import Login, Navigation, Scraper
 from config.custom_error import NoBusinessReport
+from config import PULL_TYPE, headless, FILE_DIR, join
+from webdriver_manager.chrome import ChromeDriverManager
 from helpers import make_dir, del_residue_files, date_range, credentials, authentication
 
-logger = get_logger('br_logger')
+logger = init_logger('br_logger')
 
 
 def main():
+    driver_path = ChromeDriverManager().install()
+
     global failed
     failed = []
     dates = list()
@@ -48,11 +51,11 @@ def main():
             if len(failed) != 0:
                 logger.info(failed)
                 logger.info('Waiting for failed files.')
-                time.sleep(800)
+                time.sleep(180)
                 logger.info('Resuming for failed files.')
                 chunked_list = [failed[i::4] for i in range(4)]
         finally:
-            consumers = [Thread(target=consumer, args=(queue, dates, folder,)) for folder in folders]
+            consumers = [Thread(target=consumer, args=(queue, dates, folder)) for folder in folders]
 
             producers = [Thread(target=producer, args=(barrier, queue, chunks, randint(0, 30))) for chunks in
                          chunked_list]
@@ -70,16 +73,10 @@ def main():
 
     if len(failed) > 0:
         failed_file = pd.DataFrame(failed)
-        failed_file.to_csv(os.path.join('config_file', f'Failed_File-{datetime.now().strftime("%Y-%m-%d")}.csv'),
+        failed_file.to_csv(os.path.join('failed_file', f'Failed_File-{datetime.now().strftime("%Y-%m-%d")}.csv'),
                            index=False, lineterminator='\n')
 
     logger.info('Download process completed!')
-    for folder in folders:
-        try:
-            time.sleep(120)
-            os.remove(join(FILE_DIR, folder))
-        except PermissionError:
-            print(f'{join(FILE_DIR, folder)}: File/Folder in use')
     quit()
 
 

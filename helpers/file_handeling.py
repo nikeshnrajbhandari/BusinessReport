@@ -84,41 +84,29 @@ def header_check(report_type):
     for file in files:
         df = pd.read_csv(join(path_from, file))
         column_list = list(df.columns)
-        logger.info('')
         logger.info('Header Needed.')
-        logger.info('')
         logger.info(header)
-        logger.info('')
         logger.info('Header in file.')
-        logger.info('')
         logger.info(column_list)
-        logger.info('')
 
         if header == column_list:
             shutil.move(join(path_from, file), join(path_to, file))
             logger.info(f"{file} moved to raw")
         elif len(header) != len(column_list) and all(item in column_list for item in header):
             df.columns = header
-            logger.info('')
             logger.warning(f'Incorrect header list: {column_list}')
-            logger.info('')
             df.to_csv(join(path_to, file), encoding='utf-8', index=False, lineterminator='\n')
-            logger.info('')
+
             logger.info(f"Header Corrected for {file} [{report_type}]")
-            logger.info('')
             os.remove(join(path_from, file))
         elif len(header) == len(column_list) and [item.lower() for item in column_list] == [item.lower() for item in
                                                                                             header]:
             # elif len(header) == len(column_list) and any(item in column_list for item in header):
             # elif len(header) == len(column_list):
             df.columns = header
-            logger.info('')
             logger.warning(f'Incorrect header list: {column_list}')
-            logger.info('')
             df.to_csv(join(path_to, file), encoding='utf-8', index=False, lineterminator='\n')
-            logger.info('')
             logger.info(f"Header Corrected for {file} [{report_type}]")
-            logger.info('')
             os.remove(join(path_from, file))
         else:
             raise IncorrectHeader(f'Unregistered header in {report_type}')

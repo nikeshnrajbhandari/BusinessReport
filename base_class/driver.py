@@ -1,5 +1,5 @@
 """ Selenium browser class"""
-
+import threading
 from config import *
 from selenium import webdriver
 from contextlib import contextmanager
@@ -28,7 +28,12 @@ class Driver:
         options.add_experimental_option("prefs", prefs)
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         # service = Service(executable_path='C:/Driver/chromedriver')
-        service = Service(executable_path=ChromeDriverManager().install())
+        lock = threading.Lock()
+        lock.acquire()
+        driver_path = ChromeDriverManager().install()
+        lock.release()
+
+        service = Service(executable_path=driver_path)
         self.driver = webdriver.Chrome(service=service, options=options)
         self.driver.maximize_window()
         self.logger = logging.getLogger("br_logger")

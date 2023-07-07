@@ -25,8 +25,7 @@ def br_clients_rds():
         cursor = conn.cursor()
         sql = """ 
                 select
-                    main.ID,
-                    main.Account_name
+                    main.ID
                 from
                     (
                         select

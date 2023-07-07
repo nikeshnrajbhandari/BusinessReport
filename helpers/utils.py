@@ -66,14 +66,16 @@ def t():
 
 
 def encode_files():
-    file = pd.DataFrame(pd.read_csv(os.path.join(config_files, 'Credentials.csv')))
+    file = pd.DataFrame(pd.read_csv(os.path.join(config_files, 'to_auth.csv')))
     for _, row in file.iterrows():
-        encoded = encrypt_token((row['credentails']))
-        row['credentails'] = encoded
+        encoded = encrypt_token((row['auth']))
+        row['auth'] = encoded
     print(file)
-    file.to_csv(os.path.join(config_files, 'Credentials.csv'), index=False, lineterminator='\n')
+    file.to_csv(os.path.join(config_files, 'to_auth.csv'), index=False, lineterminator='\n')
 
 
 if __name__ == '__main__':
-    a = ''
-    print(encrypt_token(a))
+    encode_files()
+    #
+    # a = ''
+    # print(encrypt_token(a))
