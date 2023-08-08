@@ -10,18 +10,18 @@ def date_range(pull_type):
 
     if pull_type.lower() == "weekly":
         start, end = weekly(now)
-        date_range = [[str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))]]
+        date_range = [[start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")]]
 
     elif pull_type.lower() == "monthly":
         date_ref = now.replace(day=1)
         start, end = monthly(date_ref)
-        date_range = [[str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))]]
+        date_range = [[start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")]]
 
     elif pull_type.lower() == "monthly_history":
         date_ref = now.replace(day=1)
         for i in range(13):
             start, end = monthly(date_ref)
-            date_range.append([str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))])
+            date_range.append([start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")])
             date_ref = start
 
     elif pull_type.lower() == "weekly_history":
@@ -29,7 +29,7 @@ def date_range(pull_type):
         date_ref = now
         while date_ref > date_till:
             start, end = weekly(date_ref)
-            date_range.append([str(start.strftime("%Y-%m-%d")), str(end.strftime("%Y-%m-%d"))])
+            date_range.append([start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")])
             date_ref = end
     return date_range
 
@@ -48,7 +48,7 @@ def monthly(date_ref):
 
 
 if __name__ == '__main__':
-    dates = date_range("weekly_history")
-    # for date in dates:
-    #     print(date[0])
-    #     print(date[1])
+    print(date_range('weekly'))
+    print(date_range('weekly_history'))
+    print(date_range('monthly'))
+    print(date_range('monthly_history'))

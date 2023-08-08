@@ -9,11 +9,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.driver_cache import DriverCacheManager
 from selenium.webdriver.support import expected_conditions as EC
 
-
 class Driver:
-    def __init__(self, folder, headless=False):
+    def __init__(self, folder, driver_dir,headless=False):
         options = ChromeOptions()
         prefs = {
             'download.default_directory': folder,
@@ -28,10 +28,12 @@ class Driver:
         options.add_experimental_option("prefs", prefs)
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         # service = Service(executable_path='C:/Driver/chromedriver')
-        lock = threading.Lock()
-        lock.acquire()
-        driver_path = ChromeDriverManager().install()
-        lock.release()
+        # lock = threading.Lock()
+        # lock.acquire()
+
+        cache_manager = DriverCacheManager(root_dir=driver_dir)
+        driver_path = ChromeDriverManager(cache_manager=cache_manager).install()
+        # lock.release()
 
         service = Service(executable_path=driver_path)
         self.driver = webdriver.Chrome(service=service, options=options)
@@ -140,6 +142,9 @@ class Driver:
         close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')
         close_button.click()
 
-    def close_driver(self):
-        self.driver.close()
-        self.driver.quit()
+    def __del__(self):
+        try:
+            self.driver.close()
+            self.driver.quit()
+        except Exception as err:
+            self.logger.error(err)

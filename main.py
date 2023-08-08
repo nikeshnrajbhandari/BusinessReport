@@ -13,15 +13,15 @@ from threading import Barrier
 from helpers.logger import init_logger
 from scrape import Login, Navigation, Scraper
 from config.custom_error import NoBusinessReport
-from config import PULL_TYPE, headless, FILE_DIR, join
-from webdriver_manager.chrome import ChromeDriverManager
+from config import PULL_TYPE, headless, BASE_DIR, FILE_DIR, join
+# from webdriver_manager.chrome import ChromeDriverManager
 from helpers import make_dir, del_residue_files, date_range, credentials, authentication
 
 logger = init_logger('br_logger')
 
 
 def main():
-    driver_path = ChromeDriverManager().install()
+    # driver_path = ChromeDriverManager().install()
 
     global failed
     failed = []
@@ -55,18 +55,23 @@ def main():
                 logger.info('Resuming for failed files.')
                 chunked_list = [failed[i::4] for i in range(4)]
         finally:
-            consumers = [Thread(target=consumer, args=(queue, dates, folder)) for folder in folders]
+            consumers = [Thread(target=consumer, args=(queue, dates, folder, f'driver_{folder}')) for folder in folders]
 
             producers = [Thread(target=producer, args=(barrier, queue, chunks, randint(0, 30))) for chunks in
                          chunked_list]
 
-            for threads in producers:
-                threads.start()
             for threads in consumers:
                 threads.start()
 
             for threads in producers:
+                threads.start()
+            # producers[0].start()
+            # consumers[0].start()
+
+            for threads in producers:
                 threads.join()
+            # producers[0].join()
+            # consumers[0].join()
             for threads in consumers:
                 threads.join()
             count = count + 1
@@ -91,11 +96,13 @@ def producer(barrier, queue, clients, identifier):
     logger.info(f'Producer {identifier}: Done')
 
 
-def consumer(queue, dates, folder):
+def consumer(queue, dates, folder, driver_folder):
     # Consumer, Will create stage directories, and get client from shared buffer to download
     logger.info(f'Consumer {folder}: Running')
     stage_dir = join(FILE_DIR, folder)
+    driver_dir = join(FILE_DIR,driver_folder)
     os.makedirs(stage_dir, exist_ok=True)
+    os.makedirs(driver_dir, exist_ok=True)
     while True:
         item = queue.get()
         # Checks if there shared buffer is empty, and closes the queue if None.
@@ -104,7 +111,7 @@ def consumer(queue, dates, folder):
             break
         logger.info(f'Consumer {folder} got :{item}')
         try:
-            br_download(item, dates, stage_dir)
+            br_download(item, dates, stage_dir, driver_dir)
         except Exception as err:
             logger.exception(err)
         finally:
@@ -114,10 +121,10 @@ def consumer(queue, dates, folder):
     logger.info(f'Consumer {folder}: Done')
 
 
-def br_download(item, dates, folder):
+def br_download(item, dates, folder, driver_dir):
     # Business Report scraping
     if item['active'] == 1:
-        driver = Driver(folder, headless)
+        driver = Driver(folder,driver_dir, headless)
         try:
             login = Login(driver, item['email'], credentials(item['name']), authentication(item['email']),
                           item['marketplace_id'])
@@ -137,13 +144,6 @@ def br_download(item, dates, folder):
             logger.error(f"Failed to download for {item['name']}")
             logger.exception(err)
             failed.append(item)
-            pass
-        finally:
-            try:
-                driver.close_driver()
-            except Exception as err:
-                logger.exception(err)
-                pass
 
 
 if __name__ == '__main__':

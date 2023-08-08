@@ -36,15 +36,13 @@ def current_client():
 
 
 def authentication(check_email):
-    auth = pd.read_csv(os.path.join(config_files, 'Authentication.csv'))
-    df_auth = pd.DataFrame(auth)
+    df_auth = pd.read_csv(os.path.join(config_files, 'Authentication.csv'))
     return list(df_auth.loc[df_auth['email'].str.lower() == check_email.lower()]['otp'])
 
 
 def credentials(check_name):
-    cred = pd.read_csv(os.path.join(config_files, 'Credentials.csv'))
-    df_cred = pd.DataFrame(cred)
-    return df_cred.loc[df_cred['name'].str.lower() == check_name.lower()]['credentials'].to_string(index=False)
+    df_cred = pd.read_csv(os.path.join(config_files, 'Credentials.csv'))
+    return df_cred.loc[df_cred['name'].str.lower() == check_name.lower(), 'credentials'].iloc[0]
 
 
 if __name__ == '__main__':
