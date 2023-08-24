@@ -6,28 +6,33 @@ import time
 import shutil
 import pandas as pd
 import logging
-from os.path import join, isfile
-from config import FILE_DIR, SKU_PRE_DIR, SKU_RAW_DIR, ASIN_PRE_DIR, ASIN_RAW_DIR, SKU_HEADER, \
+
+from configs.config import download_dir, stage_dir, driver_dir, log_dir, sku_pre_dir, sku_raw_dir, asin_pre_dir, \
+    asin_raw_dir, SKU_HEADER, \
     WITHOUTASIN_HEADER
-from config.custom_error import IncorrectHeader
+from error_helper.custom_error import IncorrectHeader
+from os.path import join, isfile
 
 logger = logging.getLogger("br_logger")
 logger.setLevel(logging.INFO)
 
 
-def make_dir():
+def dir_init():
     dir_list = [
-        FILE_DIR, SKU_PRE_DIR, SKU_RAW_DIR, ASIN_PRE_DIR, ASIN_RAW_DIR
+        download_dir, driver_dir, stage_dir, log_dir, sku_pre_dir, sku_raw_dir, asin_pre_dir, asin_raw_dir
     ]
-
     for dirs in dir_list:
         os.makedirs(dirs, exist_ok=True)
 
 
 def del_residue_files():
-    for each_dir in [SKU_PRE_DIR, ASIN_PRE_DIR]:
+    for each_dir in [sku_pre_dir, asin_pre_dir]:
         for each_file in os.listdir(each_dir):
             os.remove(join(each_dir, each_file))
+
+def del_residue_dir():
+    for each_dir in [driver_dir, stage_dir]:
+        shutil.rmtree(each_dir)
 
 
 def download_wait(name, STAGE_DIR):
@@ -69,31 +74,24 @@ def del_empty_files(path):
 
 
 def header_check(report_type):
-    # path_from = ''
-    # header = []
-    # path_to = ''
     if report_type == 'SKU':
-        path_from = SKU_PRE_DIR
+        path_from = sku_pre_dir
         header = SKU_HEADER
-        path_to = SKU_RAW_DIR
+        path_to = sku_raw_dir
     elif report_type == 'WITHOUTASIN':
-        path_from = ASIN_PRE_DIR
+        path_from = asin_pre_dir
         header = WITHOUTASIN_HEADER
-        path_to = ASIN_RAW_DIR
+        path_to = asin_raw_dir
     files = [f for f in os.listdir(path_from) if isfile(join(path_from, f))]
     for file in files:
         df = pd.read_csv(join(path_from, file))
         column_list = list(df.columns)
-        logger.info('Header Needed.')
-        logger.info(header)
-        logger.info('Header in file.')
-        logger.info(column_list)
 
         if header == column_list:
             shutil.move(join(path_from, file), join(path_to, file))
             logger.info(f"{file} moved to raw")
         elif len(header) != len(column_list) and all(item in column_list for item in header):
-            df.columns = header
+            df = df[header]
             logger.warning(f'Incorrect header list: {column_list}')
             df.to_csv(join(path_to, file), encoding='utf-8', index=False, lineterminator='\n')
 
@@ -101,8 +99,6 @@ def header_check(report_type):
             os.remove(join(path_from, file))
         elif len(header) == len(column_list) and [item.lower() for item in column_list] == [item.lower() for item in
                                                                                             header]:
-            # elif len(header) == len(column_list) and any(item in column_list for item in header):
-            # elif len(header) == len(column_list):
             df.columns = header
             logger.warning(f'Incorrect header list: {column_list}')
             df.to_csv(join(path_to, file), encoding='utf-8', index=False, lineterminator='\n')
@@ -113,4 +109,4 @@ def header_check(report_type):
 
 
 if __name__ == '__main__':
-    header_check('WITHOUTASIN')
+    pass

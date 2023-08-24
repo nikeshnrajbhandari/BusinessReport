@@ -1,22 +1,24 @@
 """ Selenium browser class"""
 import threading
-from config import *
-from selenium import webdriver
+import logging
+
 from contextlib import contextmanager
-from selenium.webdriver.common.by import By
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ChromeOptions
 from selenium.webdriver.chrome.service import Service
-from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.driver_cache import DriverCacheManager
-from selenium.webdriver.support import expected_conditions as EC
 
-class Driver:
-    def __init__(self, folder, driver_dir,headless=False):
+
+class DriverInit:
+    def __init__(self, download_dir, driver_dir, headless=False):
         options = ChromeOptions()
         prefs = {
-            'download.default_directory': folder,
+            'download.default_directory': download_dir,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
             "safebrowsing_for_trusted_sources_enabled": False,
@@ -38,6 +40,24 @@ class Driver:
         service = Service(executable_path=driver_path)
         self.driver = webdriver.Chrome(service=service, options=options)
         self.driver.maximize_window()
+        # self.logger = logging.getLogger("br_logger")
+        # self.logger.setLevel(logging.INFO)
+
+    def get_driver(self):
+        return self.driver
+
+    def __del__(self):
+        try:
+            self.driver.close()
+            self.driver.quit()
+        except Exception:
+            quit()
+
+
+class Driver:
+    def __init__(self, driver: DriverInit):
+        self.driver_obj = driver
+        self.driver = self.driver_obj.get_driver()
         self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
 
@@ -97,7 +117,7 @@ class Driver:
                 if item.text == name_column:
                     item.click()
         except TimeoutException:
-            self.logger.error("Field not found.")
+            self.logger.error("NNavigation column element not found.")
             raise
 
     # Checks Chrome download to verify the status of the download
@@ -108,7 +128,7 @@ class Driver:
             path = self.driver.execute_script("""
                 var items = document.querySelector('downloads-manager')
                     .shadowRoot.getElementById('downloadsList').items;
-                if (items.every(e => e.state === "COMPLETE"))
+                if (items.every(e => e.state === "COMPLETE")) 
                     return items.map(e => e.fileUrl || e.file_url);
                 """)
             if path:
@@ -141,10 +161,3 @@ class Driver:
         shadow_root3 = self.expand_shadow_element(root3)
         close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')
         close_button.click()
-
-    def __del__(self):
-        try:
-            self.driver.close()
-            self.driver.quit()
-        except Exception as err:
-            self.logger.error(err)

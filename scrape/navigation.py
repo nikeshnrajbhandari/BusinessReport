@@ -1,12 +1,14 @@
 """Custom made foe Seller central navigation page"""
+import logging
 
-from config import *
+from base_class import Driver, DriverInit
+from configs import *
 
 
-class Navigation:
+class Navigation(Driver):
 
-    def __init__(self, driver, col1, col2, col3):
-        self.driver = driver
+    def __init__(self, driver: DriverInit, col1, col2, col3):
+        super().__init__(driver)
         self.columns = [col1, col2, col3]
         self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
@@ -17,16 +19,16 @@ class Navigation:
                        [col3_xpath, self.columns[2]]]
 
         try:
-            self.driver.load_page(f'{self.columns[0]} Navigation')
+            self.load_page(f'{self.columns[0]} Navigation')
             for items in column_list:
                 self.selector(items[0], items[1])
         except Exception:
-            if self.driver.element_locator(home_xpath):
+            if self.element_locator(home_xpath):
                 pass
             else:
                 self.logger.error('Navigation Page not found.')
                 raise
 
     def selector(self, xpath, name_column):
-        self.driver.column_element_finder(xpath, name_column)
-        self.driver.btn_click(nav_submit_btn_xpath)
+        self.column_element_finder(xpath, name_column)
+        self.btn_click(nav_submit_btn_xpath)

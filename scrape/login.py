@@ -1,15 +1,17 @@
 """Login handler."""
 
+import logging
 import pyotp
 
-from config import *
+from base_class import Driver, DriverInit
+from configs import *
 from helpers.utils import decrypt_token
 
 
-class Login:
+class Login(Driver):
 
-    def __init__(self, driver, email, creds, otp, marketplace):
-        self.driver = driver
+    def __init__(self, driver: DriverInit, email, creds, otp, marketplace):
+        super().__init__(driver)
         self.email = email
         self.creds = creds
         self.otp = otp
@@ -18,18 +20,18 @@ class Login:
         self.logger.setLevel(logging.INFO)
 
     def sign_in(self):
-        self.driver.send_key(email_xpath, self.email)
-        self.driver.send_key(pass_xpath, decrypt_token(self.creds))
-        self.driver.btn_click(signin_btn_xpath)
+        self.send_key(email_xpath, self.email)
+        self.send_key(pass_xpath, decrypt_token(self.creds))
+        self.btn_click(signin_btn_xpath)
 
     def authentication(self):
         for param in self.otp:
             otp = pyotp.parse_uri(decrypt_token(param))
             try:
-                self.driver.load_page(f'{self.email} Authentication')
-                self.driver.send_key(auth_xpath, otp.now())
-                self.driver.btn_click(auth_btn_xpath)
-                if self.driver.element_locator(nav_header_xpath) is True:
+                self.load_page(f'{self.email} Authentication')
+                self.send_key(auth_xpath, otp.now())
+                self.btn_click(auth_btn_xpath)
+                if self.element_locator(nav_header_xpath) is True:
                     break
             except Exception:
                 continue
@@ -39,6 +41,6 @@ class Login:
             url = na_url
         else:
             url = eu_url
-        self.driver.load_page('Login Page', url, LOAD_WAIT)
+        self.load_page('Login Page', url, LOAD_WAIT)
         self.sign_in()
         self.authentication()

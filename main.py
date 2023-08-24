@@ -3,19 +3,20 @@
 import os
 import time
 import pandas as pd
-from helpers import current_client
+from file_helper.file_reader import current_client, credentials, authentication
 from queue import Queue
 from random import randint
 from threading import Thread
 from base_class import Driver
 from datetime import datetime
 from threading import Barrier
-from helpers.logger import init_logger
+from logs.logger import init_logger
 from scrape import Login, Navigation, Scraper
-from config.custom_error import NoBusinessReport
-from config import PULL_TYPE, headless, BASE_DIR, FILE_DIR, join
+from error_helper.custom_error import NoBusinessReport
+from config import PULL_TYPE, headless, FILE_DIR, join
 # from webdriver_manager.chrome import ChromeDriverManager
-from helpers import make_dir, del_residue_files, date_range, credentials, authentication
+from file_helper.file_handeling import make_download_dir, del_residue_files
+from helpers import date_range
 
 logger = init_logger('br_logger')
 
@@ -26,7 +27,7 @@ def main():
     global failed
     failed = []
     dates = list()
-    make_dir()
+    make_download_dir()
     del_residue_files()
 
     if PULL_TYPE.lower() in ['weekly', 'monthly', 'monthly_history', 'weekly_history']:
@@ -129,11 +130,21 @@ def br_download(item, dates, folder, driver_dir):
             login = Login(driver, item['email'], credentials(item['name']), authentication(item['email']),
                           item['marketplace_id'])
             login.asc_login()
+
             navigation = Navigation(driver, item['col1'], item['col2'], item['col3'])
             navigation.navigate()
             for date in dates:
-                scraper = Scraper(driver, item['seller_id'], item['marketplace_id'], item['name'], item['fraction'],
-                                  date[0], date[1], folder)
+                parameters = {
+                    "driver": driver,
+                    "seller_id": item['seller_id'],
+                    "marketplace_id": item['marketplace_id'],
+                    "name": item['name'],
+                    "fraction": item['fraction'],
+                    "start_date": date[0],
+                    "end_date": date[1],
+                    "STAGE_DIR": folder
+                }
+                scraper = Scraper(**parameters)
                 scraper.scrape()
             logger.info(f"Download complete for {item['name']}")
             time.sleep(5)
