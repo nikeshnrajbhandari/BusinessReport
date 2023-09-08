@@ -25,6 +25,7 @@ class DateHandler(DateInit):
     def __init__(self, pull_type: str):
         super().__init__()
         self.pull_type = pull_type
+        self.date_format = "%Y-%m-%d"
         method_list = {
             "weekly" : self.week_range,
             "monthly" : self.month_range,
@@ -36,21 +37,21 @@ class DateHandler(DateInit):
     def regular_range(self):
         if self.pull_type.lower() == "weekly":
             start, end = self.choice(self.now)
-            self.date_range = [start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")]
+            self.date_range = [start.strftime(self.date_format), end.strftime(self.date_format)]
 
         elif self.pull_type.lower() == "monthly":
             date_ref = self.now.replace(day=1)
             start, end = self.choice(date_ref)
-            self.date_range = [start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")]
+            self.date_range = [start.strftime(self.date_format), end.strftime(self.date_format)]
 
         return self.date_range
 
     def historical_range(self):
         if self.pull_type.lower() == "monthly_history":
                 date_ref = self.now.replace(day=1)
-                for i in range(13):
+                for _ in range(13):
                     start, end = self.choice(date_ref)
-                    self.date_range.append([start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")])
+                    self.date_range.append([start.strftime(self.date_format), end.strftime(self.date_format)])
                     date_ref = start
 
         elif self.pull_type.lower() == "weekly_history":
@@ -58,14 +59,7 @@ class DateHandler(DateInit):
             date_ref = self.now
             while date_ref > date_till:
                 start, end = self.choice(date_ref)
-                self.date_range.append([start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")])
+                self.date_range.append([start.strftime(self.date_format), end.strftime(self.date_format)])
                 date_ref = end
         return self.date_range
-
-
-# if __name__ == '__main__':
-#     # date = DateHandler('weekly_history')
-#     date = DateHandler('monthly_history')
-#     # print(date.regular_range())
-#     print(date.historical_range())
 

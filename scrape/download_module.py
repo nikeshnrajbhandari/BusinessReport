@@ -19,6 +19,7 @@ class DownloadModule:
             try:
                 parameters = {
                     "driver": driver_init,
+                    "name":client['name'],
                     "email": client['email'],
                     "creds": credentials(client['name']),
                     "otp": authentication(client['email']),
@@ -29,6 +30,7 @@ class DownloadModule:
 
                 parameters = {
                     "driver": driver_init,
+                    "name": client['name'],
                     "col1": client['col1'],
                     "col2": client['col2'],
                     "col3": client['col3'],

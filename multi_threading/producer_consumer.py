@@ -27,14 +27,11 @@ class ProducerConsumer:
     def consumer(self, dates, download_dir, driver_dir, identifier):
         self.logger.info(f'Consumer {identifier}: Running')
         while True:
-            # while self.put_condition is True:
-            #     (f'Consumer {identifier}: Waiting')
-            #     time.sleep(1)
             try:
                 item = self.queue.get(block=False)
             except Empty:
                 self.logger.info(f'Consumer {identifier}: Waiting a while')
-                time.sleep(1)
+                time.sleep(5)
                 continue
 
             # Checks if there shared buffer is empty, and closes the queue if None.
@@ -43,14 +40,11 @@ class ProducerConsumer:
                 break
             self.logger.info(f'Consumer {identifier} got :{item}')
             try:
-                print(f'_______________Consumer {identifier}')
-                print(item)
-                a = 1 / 0
+                a = 1/0
                 DownloadModule().br_download(item, dates, download_dir, driver_dir)
             except Exception as err:
                 self.logger.exception(err)
                 self.failed_list.append(item)
-        # self.put_condition = True
         self.logger.info(f'Consumer {identifier}: Done')
         return self.failed_list
 

@@ -23,6 +23,7 @@ class CustomThread(Thread):
 class ThreadProducer(ProducerConsumer):
     def __init__(self, n_process=4):
         super().__init__(n_process)
+        self.n_process = n_process
         self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
 
@@ -48,10 +49,15 @@ class ThreadProducer(ProducerConsumer):
             failed_list= (threads.join())
 
         if len(failed_list) > 0 and count < 3:
-            time.sleep(20)
-            del producers, consumers, self.queue
+            time.sleep(100)
+
             self.logger.info('Retrying for:')
             for item in failed_list:
                 self.logger.info(item)
 
-            self.task_producer(client_helper(failed_list), dates, part_dir, count + 1)
+            del producers, consumers, self.queue
+
+            task = ThreadProducer(self.n_process)
+            task.task_producer(client_list=client_helper(failed_list), dates=dates, part_dir=part_dir,count = count + 1 )
+
+            # self.task_producer(client_helper(failed_list), dates, part_dir, count + 1)

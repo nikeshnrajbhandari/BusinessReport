@@ -23,7 +23,3 @@ class CustomDir:
     def folder_info(self):
         self.dir_init()
         return list(zip(self.download_list, self.driver_list, self.id_list))
-
-# if __name__ == '__main__':
-#     a = CustomDir(4)
-#     print(a.folder_info())

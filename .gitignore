@@ -2,7 +2,6 @@ logs/
 .idea/
 br_venv/
 config_file/
-BusinessReport/
 .env
 *.pyc
 *.csv

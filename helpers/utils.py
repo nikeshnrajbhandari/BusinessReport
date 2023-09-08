@@ -4,6 +4,7 @@ import traceback
 import base64
 import pandas as pd
 import os
+from configs.config import config_files
 
 
 
@@ -65,14 +66,15 @@ def convert_to_number_round(i):
 #     print(a)
 
 
+def enc_func(row):
+    encoded = encrypt_token(row['auth'])
+    return encoded
+
 def encode_files():
-    file = pd.DataFrame(pd.read_csv(os.path.join('to_auth.csv')))
-    for _, row in file.iterrows():
-        encoded = encrypt_token((row['auth']))
-        row['auth'] = encoded
-    print(file)
-    file.to_csv(os.path.join('to_auth.csv'), index=False, lineterminator='\n')
+    df_file = pd.read_csv(os.path.join(config_files, 'to_auth.csv'))
+    df_file['auth_enc'] = df_file.apply(enc_func, axis = 1)
+    df_file.to_csv(os.path.join(config_files, 'to_auth.csv'), index=False, lineterminator='\n')
 
 
 if __name__ == '__main__':
-    encode_files()
+    decrypt_token()

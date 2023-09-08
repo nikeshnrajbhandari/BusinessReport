@@ -10,8 +10,9 @@ from helpers.utils import decrypt_token
 
 class Login(Driver):
 
-    def __init__(self, driver: DriverInit, email, creds, otp, marketplace):
+    def __init__(self, driver: DriverInit, name, email, creds, otp, marketplace):
         super().__init__(driver)
+        self.name = name
         self.email = email
         self.creds = creds
         self.otp = otp
@@ -20,18 +21,18 @@ class Login(Driver):
         self.logger.setLevel(logging.INFO)
 
     def sign_in(self):
-        self.send_key(email_xpath, self.email)
-        self.send_key(pass_xpath, decrypt_token(self.creds))
-        self.btn_click(signin_btn_xpath)
+        self.send_key(self.name, email_xpath, self.email)
+        self.send_key(self.name, pass_xpath, decrypt_token(self.creds))
+        self.btn_click(self.name, signin_btn_xpath)
 
     def authentication(self):
         for param in self.otp:
             otp = pyotp.parse_uri(decrypt_token(param))
             try:
-                self.load_page(f'{self.email} Authentication')
-                self.send_key(auth_xpath, otp.now())
-                self.btn_click(auth_btn_xpath)
-                if self.element_locator(nav_header_xpath) is True:
+                self.load_page(self.name, 'Authentication')
+                self.send_key(self.name, auth_xpath, otp.now())
+                self.btn_click(self.name, auth_btn_xpath)
+                if self.element_locator(self.name, nav_header_xpath) is True:
                     break
             except Exception:
                 continue
@@ -41,6 +42,6 @@ class Login(Driver):
             url = na_url
         else:
             url = eu_url
-        self.load_page('Login Page', url, LOAD_WAIT)
+        self.load_page(self.name, 'Login Page', url, LOAD_WAIT)
         self.sign_in()
         self.authentication()

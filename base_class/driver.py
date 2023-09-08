@@ -29,7 +29,6 @@ class DriverInit:
 
         options.add_experimental_option("prefs", prefs)
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        # service = Service(executable_path='C:/Driver/chromedriver')
         # lock = threading.Lock()
         # lock.acquire()
 
@@ -40,8 +39,6 @@ class DriverInit:
         service = Service(executable_path=driver_path)
         self.driver = webdriver.Chrome(service=service, options=options)
         self.driver.maximize_window()
-        # self.logger = logging.getLogger("br_logger")
-        # self.logger.setLevel(logging.INFO)
 
     def get_driver(self):
         return self.driver
@@ -61,52 +58,52 @@ class Driver:
         self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
 
-    def element_locator(self, wait_param, wait_by=By.XPATH, wait_time=60):
+    def element_locator(self, name, wait_param, wait_by=By.XPATH, wait_time=60):
         try:
             WebDriverWait(self.driver, wait_time).until(
                 EC.visibility_of_element_located((wait_by, wait_param))
             )
             return True
         except TimeoutException:
-            self.logger.error("Element not found.")
+            self.logger.error(f"[{name}] Element not found.")
             return False
 
-    def load_page(self, page, url='', wait_time=60):
+    def load_page(self, name, page, url='', wait_time=60):
         if url != '':
             self.driver.get(url)
         try:
             WebDriverWait(self.driver, wait_time).until(
                 lambda driver: driver.execute_script("return document.readyState") == "complete"
             )
-            self.logger.info(f"{page} page loaded")
+            self.logger.info(f"[{name}] {page} page loaded")
         except TimeoutException:
-            self.logger.error(f"{page} Loading taking too much time")
+            self.logger.error(f"[{name}] {page} Loading taking too much time")
             raise
 
-    def send_key(self, wait_param, key, wait_by=By.XPATH, wait_time=60):
+    def send_key(self, name, wait_param, key, wait_by=By.XPATH, wait_time=60):
         try:
             WebDriverWait(self.driver, wait_time).until(
                 EC.visibility_of_element_located((wait_by, wait_param))
             )
             self.driver.find_element(wait_by, wait_param).send_keys(key)
         except TimeoutException:
-            self.logger.error("Field not found.")
+            self.logger.error(f"[{name}] Field not found.")
             raise
 
-    def btn_click(self, wait_param, wait_by=By.XPATH, wait_time=60):
+    def btn_click(self, name, wait_param, wait_by=By.XPATH, wait_time=60):
         try:
             WebDriverWait(self.driver, wait_time).until(
                 EC.visibility_of_element_located((wait_by, wait_param))
             )
             self.driver.find_element(wait_by, wait_param).click()
         except TimeoutException:
-            self.logger.error("Button not found.")
+            self.logger.error(f"[{name}] Button not found.")
             raise
 
     def scroll_into_view(self, element):
         element.location_once_scrolled_into_view
 
-    def column_element_finder(self, wait_param, name_column, wait_by=By.XPATH, wait_time=60):
+    def column_element_finder(self, name, wait_param, name_column, wait_by=By.XPATH, wait_time=60):
         try:
             WebDriverWait(self.driver, wait_time).until(
                 EC.visibility_of_element_located((wait_by, wait_param))
@@ -117,7 +114,7 @@ class Driver:
                 if item.text == name_column:
                     item.click()
         except TimeoutException:
-            self.logger.error("NNavigation column element not found.")
+            self.logger.error(f"[{name}] Navigation column element not found.")
             raise
 
     # Checks Chrome download to verify the status of the download
@@ -147,7 +144,7 @@ class Driver:
         return shadow_root
 
     # Clears chorme download list
-    def rm_downloaded_item(self):
+    def rm_downloaded_item(self, name):
         root1 = self.driver.find_element(By.TAG_NAME, 'downloads-manager')
         shadow_root1 = self.expand_shadow_element(root1)
 
@@ -156,8 +153,13 @@ class Driver:
         try:
             WebDriverWait(shadow_root2, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '#remove')))
         except TimeoutException:
-            self.logger.error("Couldn't find element")
+            self.logger.error(f"[{name}] Couldn't find element")
         root3 = shadow_root2.find_element(By.CSS_SELECTOR, '#remove')
         shadow_root3 = self.expand_shadow_element(root3)
         close_button = shadow_root3.find_element(By.CSS_SELECTOR, '#maskedImage')
         close_button.click()
+
+    def wait_function(self, wait_param, wait_by=By.XPATH, wait_time=60):
+        WebDriverWait(self.driver, wait_time).until(
+            EC.visibility_of_element_located((wait_by, wait_param))
+        )

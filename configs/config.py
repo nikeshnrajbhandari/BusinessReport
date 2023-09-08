@@ -6,7 +6,6 @@ from file_helper.custom_helper import project_dir, download_dir,stage_dir, drive
 n_process = 4
 
 """Folder Config"""
-# partitions = ['s1', 's2', 's3', 's4']
 project_dir = project_dir()
 download_dir = download_dir()
 stage_dir = stage_dir()
@@ -17,7 +16,7 @@ sku_raw_dir = join_dir(download_dir, 'SKU_RAW')
 asin_pre_dir = join_dir(download_dir, 'ASIN_PRE')
 asin_raw_dir = join_dir(download_dir, 'ASIN_RAW')
 config_files = join_dir(join_dir(project_dir,'BR'), 'config_file')
-client_file = join_dir(config_files, 'All_clients - Copy.csv')
+# client_file = join_dir(config_files, 'All_clients - Copy.csv')
 client_file = join_dir(config_files, 'All_clients.csv')
 cred_file = join_dir(config_files, 'Credentials.csv')
 auth_file = join_dir(config_files, 'Authentication.csv')
