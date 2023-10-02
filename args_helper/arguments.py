@@ -1,6 +1,7 @@
 """Arguments list"""
 import argparse
 import logging
+import sys
 
 from argparse import RawTextHelpFormatter
 
@@ -26,10 +27,10 @@ class Argument:
         self.args = get_args()
         self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
-    def saleforce_id(self):
+    def salesforce_id(self):
         return self.args.client
     def pull_type(self):
-        if self.args.report_type in ('monthly_history','weekly_history')  and self.saleforce_id() is None:
+        if self.args.report_type in ('monthly_history','weekly_history')  and self.salesforce_id() is None:
             self.logger.warning("Select a specific client for historical pull")
-            quit()
+            sys.exit("Process exited as there is no client defined.")
         return self.args.report_type

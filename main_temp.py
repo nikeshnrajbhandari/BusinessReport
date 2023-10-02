@@ -1,3 +1,5 @@
+import sys
+
 from args_helper.arguments import Argument
 from pull_helper.regular_pull import RegularPull
 from pull_helper.historical_pull import HistoricalPull
@@ -21,7 +23,7 @@ def main():
     folder_init()
     argument = Argument()
     dates_obj = DateHandler(argument.pull_type())
-    client_list = current_client(argument.saleforce_id())
+    client_list = current_client(argument.salesforce_id())
     # print(client_list)
     if 'history' in argument.pull_type():
         # print('Feature to be implemented')
@@ -29,6 +31,10 @@ def main():
     else:
         chuncked_list = client_helper(client_list)
         RegularPull(chuncked_list, dates_obj.regular_range(), CustomDir().folder_info()).regular_pull()
+
+
+    folder_init()
+    sys.exit('Process Completed.')
 
 
 if __name__ == '__main__':

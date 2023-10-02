@@ -1,6 +1,7 @@
 """Testing multithreading producer_consumer"""
 
 import os
+import sys
 import time
 import pandas as pd
 from file_helper.file_reader import current_client, credentials, authentication
@@ -83,7 +84,7 @@ def main():
                            index=False, lineterminator='\n')
 
     logger.info('Download process completed!')
-    quit()
+    sys.exit('Download process completed!')
 
 
 def producer(barrier, queue, clients, identifier):

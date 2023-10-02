@@ -143,15 +143,17 @@ class Database:
                 """
             self.cursor.execute(sql)
             clients = (self.cursor.fetchall())
-            client_list = []
-            for client in clients:
-                client_list.append({'ID': client['ID']})
-                print(client)
-            return client_list
+            # print(clients)
+            # client_list = []
+            # for client in clients:
+            #     client_list.append({'ID': client['ID']})
+            # print(client_list)
+            return clients
 
         except pymysql.Error as err:
             self.logger.exception(err)
 
 
 if __name__ == '__main__':
-    pass
+    d = Database()
+    d.br_clients_rds()

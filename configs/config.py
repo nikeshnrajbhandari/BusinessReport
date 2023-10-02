@@ -12,9 +12,9 @@ stage_dir = stage_dir()
 driver_dir = driver_dir()
 log_dir = log_dir()
 sku_pre_dir = join_dir(download_dir, 'SKU_PRE')
-sku_raw_dir = join_dir(download_dir, 'SKU_RAW')
+# sku_raw_dir = join_dir(download_dir, 'SKU_RAW')
 asin_pre_dir = join_dir(download_dir, 'ASIN_PRE')
-asin_raw_dir = join_dir(download_dir, 'ASIN_RAW')
+# asin_raw_dir = join_dir(download_dir, 'ASIN_RAW')
 config_files = join_dir(join_dir(project_dir,'BR'), 'config_file')
 # client_file = join_dir(config_files, 'All_clients - Copy.csv')
 client_file = join_dir(config_files, 'All_clients.csv')
@@ -24,7 +24,7 @@ auth_file = join_dir(config_files, 'Authentication.csv')
 """Selenium Config"""
 
 headless = True
-LOAD_WAIT = 60
+LOAD_WAIT = 120
 SKU_HEADER = ['(Parent) ASIN', '(Child) ASIN', 'SKU']
 WITHOUTASIN_HEADER = ['(Parent) ASIN', '(Child) ASIN', 'Title', 'Sessions - Mobile App', 'Sessions - Browser',
                       'Sessions - Total', 'Session Percentage - Mobile App', 'Session Percentage - Browser',

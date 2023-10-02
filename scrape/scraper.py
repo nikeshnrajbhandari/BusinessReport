@@ -52,11 +52,12 @@ class Scraper(Driver):
                     region=region, report=key)
 
             self.driver.implicitly_wait(10)
-            move_rename(self.name, filename, self.stage_dir, dtype_params[key].get('pre'))
+            # move_rename(self.name, filename, self.stage_dir, dtype_params[key].get('pre'))
+            move_rename(self.name, filename, self.stage_dir, self.stage_dir)
+            # self.driver.implicitly_wait(5)
+            # del_empty_files(self.name, dtype_params[key].get('pre'))
             self.driver.implicitly_wait(5)
-            del_empty_files(self.name, dtype_params[key].get('pre'))
-            self.driver.implicitly_wait(5)
-            header_check(self.name, key)
+            header_check(self.name, key, self.stage_dir)
             self.driver.implicitly_wait(20)
 
     # For clients with heavy data, which may need to be downloaded in chunks
@@ -73,7 +74,7 @@ class Scraper(Driver):
         concat_files(self.name, self.stage_dir)
 
     def download(self, url, region, report):
-        self.load_page(self.name, report, url)
+        self.load_page(self.name, report.upper(), url)
         handles_before = self.driver.window_handles
         self.toggle_column()
 
@@ -90,7 +91,7 @@ class Scraper(Driver):
 
         self.wait_for_new_window(handles_before)
         if self.every_downloads_chrome():
-            download_wait(self.name, report, self.stage_dir)
+            download_wait(self.name, report.upper(), self.stage_dir)
         self.rm_downloaded_item(self.name)
 
     def toggle_column(self):
@@ -115,11 +116,11 @@ class Scraper(Driver):
                 if 'checkbox checked' != elements[0].get_attribute('class'):
                     try:
                         elements[0].click()
-                    except Exception as err:
-                        self.logger.exception(err)
+                    except Exception:
+                        raise
             else:
                 if 'checkbox checked' == elements[0].get_attribute('class'):
                     try:
                         elements[0].click()
-                    except Exception as err:
-                        self.logger.exception(err)
+                    except Exception:
+                        raise

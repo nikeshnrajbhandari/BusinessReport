@@ -6,9 +6,10 @@ import time
 import shutil
 import pandas as pd
 import logging
+import threading
 
-from configs.config import download_dir, stage_dir, driver_dir, log_dir, sku_pre_dir, sku_raw_dir, asin_pre_dir, \
-    asin_raw_dir, SKU_HEADER, \
+from configs.config import download_dir, stage_dir, driver_dir, log_dir, sku_pre_dir, asin_pre_dir, \
+    SKU_HEADER, \
     WITHOUTASIN_HEADER
 from error_helper.custom_error import IncorrectHeader
 from os.path import join, isfile
@@ -19,7 +20,7 @@ logger.setLevel(logging.INFO)
 
 def dir_init():
     dir_list = [
-        download_dir, driver_dir, stage_dir, log_dir, sku_pre_dir, sku_raw_dir, asin_pre_dir, asin_raw_dir
+        download_dir, driver_dir, stage_dir, log_dir, sku_pre_dir, asin_pre_dir
     ]
     for dirs in dir_list:
         os.makedirs(dirs, exist_ok=True)
@@ -36,7 +37,7 @@ def del_residue_dir():
         shutil.rmtree(each_dir)
 
 
-def download_wait(name, report,stage_dir):
+def download_wait(name, report, stage_dir):
     logger.info(f"[{name}] {report} Waiting for downloads")
     dl_wait = True
     while dl_wait:
@@ -74,15 +75,16 @@ def del_empty_files(name, path):
             os.remove(join(path, file))
 
 
-def header_check(name, report_type):
+def header_check(name, report_type, stage_dir):
+    path_from = stage_dir
+    header = str
+    path_to = str
     if report_type == 'sku':
-        path_from = sku_pre_dir
         header = SKU_HEADER
-        path_to = sku_raw_dir
+        path_to = sku_pre_dir
     elif report_type == 'asin':
-        path_from = asin_pre_dir
         header = WITHOUTASIN_HEADER
-        path_to = asin_raw_dir
+        path_to = asin_pre_dir
     files = [f for f in os.listdir(path_from) if isfile(join(path_from, f))]
     for file in files:
         df = pd.read_csv(join(path_from, file))
@@ -90,7 +92,7 @@ def header_check(name, report_type):
 
         if header == column_list:
             shutil.move(join(path_from, file), join(path_to, file))
-            logger.info(f"[{name}] {file} moved to raw")
+            logger.info(f"[{name}] {file} moved to pre")
         elif len(header) != len(column_list) and all(item in column_list for item in header):
             df = df[header]
             logger.warning(f'Incorrect header list: {column_list}')
@@ -106,7 +108,3 @@ def header_check(name, report_type):
             os.remove(join(path_from, file))
         else:
             raise IncorrectHeader(f'[{name}] Unregistered header in {report_type}')
-
-
-if __name__ == '__main__':
-    pass

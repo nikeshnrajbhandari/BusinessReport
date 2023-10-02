@@ -52,7 +52,7 @@ class DownloadModule:
                 self.logger.info(f"Download complete for {str(client['name'])}")
             except NoBusinessReport as err:
                 # When there is no business report section, will not flag as failed.
-                self.logger.exception(err)
+                raise
             except Exception as err:
                 self.logger.error(f"Failed to download for {str(client['name'])}")
-                self.logger.exception(err)
+                raise

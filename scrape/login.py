@@ -29,10 +29,10 @@ class Login(Driver):
         for param in self.otp:
             otp = pyotp.parse_uri(decrypt_token(param))
             try:
-                self.load_page(self.name, 'Authentication')
-                self.send_key(self.name, auth_xpath, otp.now())
-                self.btn_click(self.name, auth_btn_xpath)
-                if self.element_locator(self.name, nav_header_xpath) is True:
+                self.load_page(self.name, 'Authentication',wait_time=LOAD_WAIT)
+                self.send_key(self.name, auth_xpath, otp.now(), wait_time=LOAD_WAIT)
+                self.btn_click(self.name, auth_btn_xpath, wait_time=LOAD_WAIT)
+                if self.element_locator(self.name, nav_header_xpath, wait_time=LOAD_WAIT) is True:
                     break
             except Exception:
                 continue
@@ -42,6 +42,6 @@ class Login(Driver):
             url = na_url
         else:
             url = eu_url
-        self.load_page(self.name, 'Login Page', url, LOAD_WAIT)
+        self.load_page(self.name, 'Login Page', url, wait_time=LOAD_WAIT)
         self.sign_in()
         self.authentication()

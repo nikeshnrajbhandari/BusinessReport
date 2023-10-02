@@ -1,5 +1,6 @@
 from configs.config import n_process
 from multi_threading.thread_producer import ThreadProducer
+import logging, time
 
 
 class RegularPull:
@@ -7,7 +8,8 @@ class RegularPull:
         self.client_list = client_list
         self.dates = dates
         self.part_dir = part_dir
-
+        self.logger = logging.getLogger("br_logger")
+        self.logger.setLevel(logging.INFO)
 
     def regular_pull(self):
         task = ThreadProducer(n_process)

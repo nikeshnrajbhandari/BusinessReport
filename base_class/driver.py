@@ -1,4 +1,5 @@
 """ Selenium browser class"""
+import sys
 import threading
 import logging
 
@@ -48,7 +49,7 @@ class DriverInit:
             self.driver.close()
             self.driver.quit()
         except Exception:
-            quit()
+            sys.exit('Exiting due to exception in Driver exit operation!')
 
 
 class Driver:

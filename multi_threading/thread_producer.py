@@ -1,9 +1,10 @@
 from threading import Thread
-from multi_threading.producer_consumer import ProducerConsumer
 from helpers.client_helper import client_helper
+from scrape.download_module import DownloadModule
+from threading import Barrier
+from queue import Queue, Empty
+import logging, time
 
-import time
-import logging
 
 class CustomThread(Thread):
     def __init__(self, group=None, target=None, name=None,
@@ -20,14 +21,47 @@ class CustomThread(Thread):
         return self._return
 
 
-class ThreadProducer(ProducerConsumer):
+class ThreadProducer:
     def __init__(self, n_process=4):
-        super().__init__(n_process)
         self.n_process = n_process
+        self.queue = Queue()
+        self.barrier = Barrier(n_process)
+        self.failed_list = []
         self.logger = logging.getLogger("br_logger")
         self.logger.setLevel(logging.INFO)
 
-    def task_producer(self, client_list, dates, part_dir, count=0, failed_list=[]):
+    def producer(self, clients, identifier):
+        self.logger.info(f'Producer {identifier}: Running')
+        if len(clients) != 0:
+            for client in clients:
+                self.queue.put(client)
+        self.barrier.wait()
+        self.queue.put(None)
+        self.logger.info(f'Producer {identifier}: Done')
+
+    def consumer(self, dates, download_dir, driver_dir, identifier):
+        self.logger.info(f'Consumer {identifier}: Running')
+        while True:
+            try:
+                item = self.queue.get()
+            except Empty:
+                self.logger.info(f'Consumer {identifier}: Waiting a while')
+                time.sleep(5)
+                continue
+
+            # Checks if there shared buffer is empty, and closes the queue if None.
+            if item is None:
+                self.queue.put(item)
+                break
+            self.logger.info(f'Consumer {identifier} got :{item}')
+            try:
+                DownloadModule().br_download(item, dates, download_dir, driver_dir)
+            except Exception as err:
+                self.logger.exception(err)
+                self.failed_list.append(item)
+        self.logger.info(f'Consumer {identifier}: Done')
+
+    def task_producer(self, client_list, dates, part_dir, count=0):
         # print(client_list)
         consumers = [CustomThread(target=self.consumer, args=(dates, part[0], part[1], part[2])) for part in
                      part_dir]
@@ -45,19 +79,16 @@ class ThreadProducer(ProducerConsumer):
             threads.join()
 
         for threads in consumers:
-            # failed_list = threads.join()
-            failed_list= (threads.join())
+            threads.join()
 
-        if len(failed_list) > 0 and count < 3:
-            time.sleep(100)
+        if len(self.failed_list) > 0 and count < 3:
+            time.sleep(60)
 
             self.logger.info('Retrying for:')
-            for item in failed_list:
+            for item in self.failed_list:
                 self.logger.info(item)
 
-            del producers, consumers, self.queue
+            del producers, consumers, self.queue, self.barrier
 
             task = ThreadProducer(self.n_process)
-            task.task_producer(client_list=client_helper(failed_list), dates=dates, part_dir=part_dir,count = count + 1 )
-
-            # self.task_producer(client_helper(failed_list), dates, part_dir, count + 1)
+            task.task_producer(client_list=client_helper(self.failed_list), dates=dates, part_dir=part_dir, count=count + 1)
