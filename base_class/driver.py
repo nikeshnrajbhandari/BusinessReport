@@ -127,17 +127,19 @@ class Driver:
                 return document.querySelector('downloads-manager')
                     .shadowRoot.getElementById('downloadsList').items;
                 """)
-
-                # ("""
-                # var items = document.querySelector('downloads-manager')
-                #     .shadowRoot.getElementById('downloadsList').items;
-                # if (items.every(e => e.state === "COMPLETE"))
-                #     return items.map(e => e.fileUrl || e.file_url);
-                # """)
-            # print(path[0]['state'])
-            if path[0]['state'] == 2:
-                break
+            # print(path)
+            if type(path) == list and len(path) >0:
+                if path[0]['state'] == 2:
+                    break
         return True
+
+    def clear_chrome_download(self):
+        self.driver.execute_script("""
+            document.querySelector('downloads-manager').shadowRoot
+            .querySelector('#toolbar').shadowRoot
+            .querySelector('#moreActionsMenu')
+            .querySelector('button.clear-all').click()
+        """)
 
     @contextmanager
     def wait_for_new_window(self, handles, wait_time=60):

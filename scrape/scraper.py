@@ -6,6 +6,7 @@ from base_class import Driver, DriverInit
 from configs import *
 from datetime import datetime, timedelta
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from error_helper.custom_error import NoBusinessReport
 from file_helper.file_handeling import move_rename, concat_files, header_check, del_empty_files, download_wait, \
     del_residue_stage_files, move_file
@@ -81,7 +82,7 @@ class Scraper(Driver):
 
     def download(self, url, region, report):
         self.load_page(self.name, report.upper(), url)
-        handles_before = self.driver.window_handles
+        handles = self.driver.window_handles
         self.toggle_column()
 
         if report == 'sku':
@@ -95,10 +96,17 @@ class Scraper(Driver):
         if self.element_locator(self.name, download_param.get(region)):
             self.btn_click(self.name, download_param.get(region))
 
-        self.wait_for_new_window(handles_before)
+        while len(handles) < 2:
+            handles = self.driver.window_handles
+
+        while len(handles) > 1:
+            handles = self.driver.window_handles
+
         if self.every_downloads_chrome():
             download_wait(self.name, report.upper(), self.stage_dir)
-        # self.rm_downloaded_item(self.name)
+        self.clear_chrome_download()
+
+
 
     def toggle_column(self):
         if self.element_locator(self.name, '//*[@id="root"]/div/div[2]/div/div[2]/div/div/kat-link') is False:
