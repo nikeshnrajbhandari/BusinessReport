@@ -6,10 +6,9 @@ import time
 import shutil
 import pandas as pd
 import logging
-import threading
 
-from configs.config import download_dir, stage_dir, driver_dir, log_dir, sku_pre_dir, asin_pre_dir, \
-    SKU_HEADER, \
+from configs.config import download_dir, stage_dir, driver_dir, log_dir, sku_pre_dir, sku_raw_dir, asin_pre_dir, \
+    asin_raw_dir, SKU_HEADER, \
     WITHOUTASIN_HEADER
 from error_helper.custom_error import IncorrectHeader
 from os.path import join, isfile
@@ -20,7 +19,7 @@ logger.setLevel(logging.INFO)
 
 def dir_init():
     dir_list = [
-        download_dir, driver_dir, stage_dir, log_dir, sku_pre_dir, asin_pre_dir
+        download_dir, driver_dir, stage_dir, log_dir, sku_pre_dir, sku_raw_dir, asin_pre_dir, asin_raw_dir
     ]
     for dirs in dir_list:
         os.makedirs(dirs, exist_ok=True)
@@ -30,6 +29,11 @@ def del_residue_files():
     for each_dir in [sku_pre_dir, asin_pre_dir]:
         for each_file in os.listdir(each_dir):
             os.remove(join(each_dir, each_file))
+
+
+def del_residue_stage_files(stage_dir):
+    for each_file in os.listdir(stage_dir):
+        os.remove(join(stage_dir, each_file))
 
 
 def del_residue_dir():
@@ -57,11 +61,16 @@ def move_rename(name, filename, path_from, path_to):
         logger.info(f'[{name}] Moved to {path_to}')
 
 
+def move_file(name, filename, path_from, path_to):
+    shutil.move(join(path_from, filename), join(path_to, filename))
+    logger.info(f'[{name}] Moved to {path_to}')
+
+
 def concat_files(name, stage_dir):
     file_format = join(stage_dir, '*.csv')
     file_list = glob.glob(file_format)
     df = pd.concat(map(pd.read_csv, file_list))
-    del_residue_files()
+    del_residue_stage_files(stage_dir)
     df.to_csv(join(stage_dir, 'BusinessReport.csv'), encoding='utf-8', index=False, lineterminator='\n')
     logger.info(f'[{name}] Files concat finished.')
 

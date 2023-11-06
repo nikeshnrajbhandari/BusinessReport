@@ -77,4 +77,4 @@ def encode_files():
 
 
 if __name__ == '__main__':
-    decrypt_token()
+    encode_files()

@@ -7,7 +7,8 @@ from configs import *
 from datetime import datetime, timedelta
 from selenium.webdriver.common.by import By
 from error_helper.custom_error import NoBusinessReport
-from file_helper.file_handeling import move_rename, concat_files, header_check, del_empty_files, download_wait
+from file_helper.file_handeling import move_rename, concat_files, header_check, del_empty_files, download_wait, \
+    del_residue_stage_files, move_file
 
 
 class Scraper(Driver):
@@ -26,9 +27,12 @@ class Scraper(Driver):
         self.stage_dir = stage_dir
 
     def scrape(self):
+        del_residue_stage_files(self.stage_dir)
         dtype_params = {
-            'sku': {'na': {'url': na_br, 'br': na_sku}, 'eu': {'url': eu_br, 'br': eu_sku}, 'pre': sku_pre_dir},
-            'asin': {'na': {'url': na_br, 'br': na_asin}, 'eu': {'url': eu_br, 'br': eu_asin}, 'pre': asin_pre_dir}
+            'sku': {'na': {'url': na_br, 'br': na_sku}, 'eu': {'url': eu_br, 'br': eu_sku}, 'pre': sku_pre_dir,
+            'raw': sku_raw_dir},
+            'asin': {'na': {'url': na_br, 'br': na_asin}, 'eu': {'url': eu_br, 'br': eu_asin}, 'pre': asin_pre_dir,
+                     'raw': asin_raw_dir}
         }
         self.logger.info(f'[{self.name}] Downloading for date range {self.start_date} to {self.end_date}')
         filename = f'!!S!!{self.seller_id}!!S!!!!M!!{self.marketplace_id}!!M!!{self.name}!!F!!{self.start_date}!!F!!-!!T!!{self.end_date}!!T!!'
@@ -54,10 +58,12 @@ class Scraper(Driver):
             self.driver.implicitly_wait(10)
             # move_rename(self.name, filename, self.stage_dir, dtype_params[key].get('pre'))
             move_rename(self.name, filename, self.stage_dir, self.stage_dir)
-            # self.driver.implicitly_wait(5)
-            # del_empty_files(self.name, dtype_params[key].get('pre'))
+            self.driver.implicitly_wait(5)
+            del_empty_files(self.name, self.stage_dir)
             self.driver.implicitly_wait(5)
             header_check(self.name, key, self.stage_dir)
+            # self.driver.implicitly_wait(10)
+            # move_file(self.name, filename, dtype_params[key].get('pre'), dtype_params[key].get('raw'))
             self.driver.implicitly_wait(20)
 
     # For clients with heavy data, which may need to be downloaded in chunks
@@ -92,7 +98,7 @@ class Scraper(Driver):
         self.wait_for_new_window(handles_before)
         if self.every_downloads_chrome():
             download_wait(self.name, report.upper(), self.stage_dir)
-        self.rm_downloaded_item(self.name)
+        # self.rm_downloaded_item(self.name)
 
     def toggle_column(self):
         if self.element_locator(self.name, '//*[@id="root"]/div/div[2]/div/div[2]/div/div/kat-link') is False:

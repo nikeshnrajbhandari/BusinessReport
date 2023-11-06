@@ -124,12 +124,18 @@ class Driver:
             self.driver.get("chrome://downloads/")
         while True:
             path = self.driver.execute_script("""
-                var items = document.querySelector('downloads-manager')
+                return document.querySelector('downloads-manager')
                     .shadowRoot.getElementById('downloadsList').items;
-                if (items.every(e => e.state === "COMPLETE")) 
-                    return items.map(e => e.fileUrl || e.file_url);
                 """)
-            if path:
+
+                # ("""
+                # var items = document.querySelector('downloads-manager')
+                #     .shadowRoot.getElementById('downloadsList').items;
+                # if (items.every(e => e.state === "COMPLETE"))
+                #     return items.map(e => e.fileUrl || e.file_url);
+                # """)
+            # print(path[0]['state'])
+            if path[0]['state'] == 2:
                 break
         return True
 
