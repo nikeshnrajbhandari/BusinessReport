@@ -2,7 +2,6 @@ import os
 import logging
 import pandas as pd
 
-
 from db_helper.db_info import Database
 from configs.config import client_file, cred_file, auth_file
 
@@ -10,7 +9,7 @@ logger = logging.getLogger("br_logger")
 logger.setLevel(logging.INFO)
 
 
-def current_client(salesforce_id = None):
+def current_client(salesforce_id=None, marketplace_id=None):
     clients = pd.read_csv(client_file)
     curr_client = pd.DataFrame(Database().br_clients_rds())
     df_clients_main = pd.DataFrame(clients)
@@ -22,6 +21,10 @@ def current_client(salesforce_id = None):
             df_clients_main['salesforce_id'] == client_dict.get('salesforce_id')].to_dict('records')
         if len(curr_client_record) == 0:
             logger.info(f"Setting for {client_dict.get('salesforce_id')} not found!")
+        if marketplace_id is not None and curr_client_record != 0:
+            for item in curr_client_record[:]:
+                if item['marketplace_id'] != marketplace_id:
+                    curr_client_record.remove(item)
     else:
         df_no_setting = df_clients_list[~df_clients_list.ID.isin(df_clients_main.salesforce_id)]
         if len(df_no_setting) != 0:
@@ -43,4 +46,4 @@ def credentials(check_name):
 
 
 if __name__ == '__main__':
-    current_client()
+    print(current_client('0011T00002QdoFJQAZ', 'A1F83G8C2ARO7P'))

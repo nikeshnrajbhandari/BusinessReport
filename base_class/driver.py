@@ -25,6 +25,11 @@ class DriverInit:
             "safebrowsing_for_trusted_sources_enabled": False,
             "safebrowsing.enabled": False
         }
+        options.add_argument("enable-automation")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--dns-prefetch-disable")
+        options.add_argument("--disable-gpu")
+
         if headless:
             options.add_argument("--headless=new")
 

@@ -30,7 +30,7 @@ def main():
     dir_init()
     argument = Argument()
     dates_obj = DateHandler(argument.pull_type())
-    client_list = current_client(argument.salesforce_id())
+    client_list = current_client(argument.salesforce_id(), argument.marketplace_id())
     # print(client_list)
     if 'history' in argument.pull_type():
         # print('Feature to be implemented')

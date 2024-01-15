@@ -81,7 +81,8 @@ class ThreadProducer:
         for threads in consumers:
             threads.join()
 
-        if len(self.failed_list) > 0 and count < 3:
+        if len(self.failed_list) > 0:
+            self.logger.info('Pull failed for client(s). Waiting...')
             time.sleep(60)
 
             self.logger.info('Retrying for:')

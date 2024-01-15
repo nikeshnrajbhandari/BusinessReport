@@ -26,7 +26,10 @@ class Navigation(Driver):
         except Exception:
             if self.element_locator(self.name, home_xpath) is False:
                 self.logger.error(f'[{self.name}] Navigation Page not found.')
-                raise
+                self.driver.implicitly_wait(120)
+                if self.element_locator(self.name, nav_header_xpath) is False:
+                    self.logger.error(f"[{self.name}] Navigation page not found.")
+                    raise
 
     def selector(self, xpath, name_column):
         self.column_element_finder(self.name, xpath, name_column)
