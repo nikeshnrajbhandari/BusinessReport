@@ -81,15 +81,17 @@ class ThreadProducer:
         for threads in consumers:
             threads.join()
 
-        if len(self.failed_list) > 0:
-            self.logger.info('Pull failed for client(s). Waiting...')
-            time.sleep(60)
+        if count < 10:
+            if len(self.failed_list) > 0:
+                self.logger.info('Pull failed for client(s). Waiting...')
+                time.sleep(60)
 
-            self.logger.info('Retrying for:')
-            for item in self.failed_list:
-                self.logger.info(item)
+                self.logger.info('Retrying for:')
+                for item in self.failed_list:
+                    self.logger.info(item)
 
-            del producers, consumers, self.queue, self.barrier
+                del producers, consumers, self.queue, self.barrier
 
-            task = ThreadProducer(self.n_process)
-            task.task_producer(client_list=client_helper(self.failed_list), dates=dates, part_dir=part_dir, count=count + 1)
+                task = ThreadProducer(self.n_process)
+                task.task_producer(client_list=client_helper(self.failed_list), dates=dates, part_dir=part_dir,
+                                   count=count + 1)
