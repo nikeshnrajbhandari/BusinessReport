@@ -23,6 +23,7 @@ auth_file = join_dir(config_files, 'Authentication.csv')
 
 """Selenium Config"""
 
+# headless = False
 headless = True
 LOAD_WAIT = 120
 SKU_HEADER = ['(Parent) ASIN', '(Child) ASIN', 'SKU']

@@ -95,12 +95,10 @@ class Scraper(Driver):
 
         if self.element_locator(self.name, download_param.get(region)):
             self.btn_click(self.name, download_param.get(region))
-
-        while len(handles) < 2:
-            handles = self.driver.window_handles
-
-        while len(handles) > 1:
-            handles = self.driver.window_handles
+        if self.element_locator(self.name, download_param.get(region)):
+            pass
+        else:
+            time.sleep(60)
 
         if self.every_downloads_chrome():
             download_wait(self.name, report.upper(), self.stage_dir)
